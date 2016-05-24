@@ -179,11 +179,31 @@ exports.saveOAuthUserProfile = function(req, profile, done) {
 			if (!user) {
 
 				// Set a possible base username
-				var possibleUsername = profile.username || ((profile.email) ? profile.email.split('@')[0] : '');
+				var possibleUsername = profile.providerData.name || ((profile.email) ? profile.email.split('@')[0] : '');
 				console.log("made it here");
-				console.log("profile" + profile);
-				user = new User(profile);
+				console.log("profile" + JSON.stringify(profile));
+				var name = profile.providerData.name.split(' ');
+				user = new User({
+					firstName: name[0],
+					lastName: name[1],
+					//bio: this.bio,
+					//username: this.username,
+					//password: this.password,
+					provider: profile.provider,
+					role: 'coach',
+					//slack_id: this.slack_id,
+					slack: {
+						//email: this.slack.email,
+						//id: this.slack.id,
+						name: profile.providerData.name,
+						//img: ''
+					},
+					coaches: [],
+					//imgUrl:
+					//phoneNumber:
+				});
 				user.save(function(err){
+					console.log('New user created: ' + JSON.stringify(user));
 					return done(err, user);
 				})
 				// Find a unique available username

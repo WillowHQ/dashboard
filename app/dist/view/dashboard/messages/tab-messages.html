@@ -1,15 +1,25 @@
-<p ng-if="!vm.selected.messages.length">
-  No messages for {{vm.selected.slack.name}}, yet.
-</p>
-<p ng-repeat="message in vm.selected.messages track by $index">
-  {{message.body}}
-</p>
-<form name="messageForm" ng-submit="vm.sendMessage(message.content)">
+<md-virtual-repeat-container id="vertical-container" scroll-glue>
+    <p ng-if="!vm.selected.messages.length">
+      No messages for {{vm.selected.slack.name}}, yet.
+    </p>
+    <p md-virtual-repeat="message in vm.selected.messages" class="repeated-item" flex>
+      <span ng-if="message.sentTo === vm.selected._id">
+        Sent: {{message.body}}
+      </span>
+      <span ng-if="message.sentTo != vm.selected._id">
+        Received: {{message.body}}
+      </span>
+    </p>
+</md-virtual-repeat-container>
+<form name="messageForm">
   <md-input-container class="md-block" flex-gt-sm>
     <label>Message</label>
     <input ng-model="message.content" name="content" />
   </md-input-container>
-  <md-button type="submit" class="md-primary md-raised" ng-disabled="!message.content">
-    Send
+  <md-button type="submit" class="md-primary md-raised" ng-disabled="!message.content" ng-click="vm.sendMessage(message.content); message.content=''">
+    Send (SMS)
+  </md-button>
+  <md-button type="submit" class="md-primary md-raised" ng-disabled="!message.content" ng-click="vm.sendFB(message.content); message.content=''">
+    Send (Messenger)
   </md-button>
 </form>

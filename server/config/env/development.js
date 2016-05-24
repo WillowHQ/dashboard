@@ -6,8 +6,8 @@ module.exports = {
 	db: 'mongodb://thom:letmein1@ds011251.mlab.com:11251/fitpath',
 	sessionSecret: 'developmentSessionSecret',
 	facebook: {
-		clientID: '995814307175903',
-		clientSecret: '30bf3ea1731fdf9822c2a9526c9a39f0',
+		clientID: '237058900007908',
+		clientSecret: '756eb97b58fb72f845277f0e2f51fda2',
 		callbackURL: 'http://localhost:3000/oauth/facebook/callback'
 	},
 	twitter: {

@@ -7,6 +7,7 @@ var crypto = require('crypto');
 var smtpTransport = require('nodemailer-smtp-transport');
 var nodemailer = require('nodemailer');
 var dashboard = require('./dashboard.controller');
+var parse = require('csv-parse');
 
 /**
   Node Mailer Config
@@ -36,30 +37,32 @@ exports.create = function(req, res) {
   user.save(function(err) {
     if (err) {
       console.log(err);
+      res.send(err);
     }
     else {
       console.log(user._id);
-    }
-  });
 
-  console.log("User controller hit");
-  console.log(user._id);
+      console.log("User controller hit");
+      console.log(user._id);
 
-  User.findByIdAndUpdate(user.coaches[0],
-  {$push: {"clients": user._id}},
-  {safe: true},
-  function(err, coach) {
-   if(err) {
-     console.log(err);
-    }
-    else {
-      console.log('adding user ' + user._id + ' ot coac');
-      user.clients.push(user._id);
-      console.log(coach);
-      console.log('success');
-      res.send(user);
-    }
-  });
+      User.findByIdAndUpdate(user.coaches[0],
+        {$push: {"clients": user._id}},
+        {safe: true},
+        function(err, coach) {
+          if(err) {
+            console.log(err);
+          }
+          else {
+            console.log('adding user ' + user._id + ' ot coac');
+            user.clients.push(user._id);
+            console.log(coach);
+            console.log('success');
+            res.send(user);
+          }
+        });
+      }
+    });
+  };
 
   //Test: need my our id(colins)
       // User.populate(
@@ -72,9 +75,6 @@ exports.create = function(req, res) {
       //     }
       //   }
       // );
-
-}
-
 
 exports.updateCoach = function(req, res){
   console.log("Im a coach!");
@@ -245,3 +245,11 @@ exports.delete = function(req, res){
 
 
 }
+
+exports.parseCSV = function (req, res) {
+  console.log(req.body.textToParse);
+  parse(req.body.textToParse, function (err, output) {
+    console.log(JSON.stringify(output));
+    res.send(output);
+  });
+};

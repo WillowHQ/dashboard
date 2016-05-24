@@ -17,12 +17,22 @@ var app;
       AddOrUploadUserDialogController.prototype.cancel = function () {
         this.$mdDialog.cancel();
       };
-      AddOrUploadUserDialogController.prototype.add = function () {
+      AddOrUploadUserDialogController.prototype.save = function () {
+        var add = this.add;
+        this.$mdDialog.hide(add);
+      };
+      AddOrUploadUserDialogController.prototype.add = function ($event) {
+        console.log('You wish to add a new client');
+        dashboard.MainController.addUser($event);
         // TODO: figure out how to route to another controller
       };
-      AddOurUploadUserDialogController.prototype.upload = function () {
+      AddOrUploadUserDialogController.prototype.upload = function () {
         // TODO: figure out how to route to another controller
-      }
-    })
-  })
-})
+      };
+      AddOrUploadUserDialogController.$inject = ['$mdDialog', 'userService'];
+
+      return AddOrUploadUserDialogController;
+    }());
+    dashboard.AddOrUploadUserDialogController = AddOrUploadUserDialogController;
+  })(dashboard = app.dashboard || (app.dashboard = {}));
+})(app || (app = {}));
