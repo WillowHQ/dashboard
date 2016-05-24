@@ -110,7 +110,7 @@ module.exports = function(app) {
 	// Set up the Facebook OAuth routes
 	app.get('/oauth/facebook', passport.authenticate('facebook', {
 		failureRedirect: '/signin',
-		scope: ['email']
+		scope: ['email', 'user_friends']
 	}));
 	app.get('/oauth/facebook/callback', passport.authenticate('facebook', {
 		failureRedirect: '/signin',

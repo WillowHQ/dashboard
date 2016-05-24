@@ -10,5 +10,6 @@ module.exports = function(app) {
   app.post('/api/user/delete/:id', user.delete);
   app.post('/api/coach/newuser/:id', user.updateCoach);
 
+  app.post('/api/user/parse-csv', user.parseCSV);
 
 }

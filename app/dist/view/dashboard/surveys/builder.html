@@ -4,106 +4,243 @@
     <div>
       <form name="userForm" ng-submit = "vm.createSurvey()">
 
-        <div layout-gt-sm="row" >
-          <md-input-container class="md-block" flex="90">
+        <div layout-gt-sm="row" layout-padding >
+          <md-input-container  class="md-block" flex="50" >
             <label>Title of Survey</label>
-            <input ng-model = "vm.surveyTitle" required>
+            <input ng-disabled = "!vm.first" ng-model = "vm.surveyTitle" required>
             <div ng-messages="userForm.username.$error">
               <div ng-message="required">This is required.</div>
             </div>
           </md-input-container>
-          <md-button class = "md-block" type = "submit" ng-disabled="userForm.$invalid">
-            Create Survey
-          </md-button>
         </div>
-        <md-content>
+
+        <md-content ng-if = "vm.first" layout-padding>
           <div layout ="row">
 
             <md-input-container layout-padding class "md-block" flex= "80">
-              <label>Question </label>
-              <input>
+              <label>Question 1</label>
+              <input ng-model = "vm.questions[0].question" ng-required = "true">
             </md-input-container>
 
             <md-input-container layout-padding class "md-block" flex ="20">
               <label>Question Header </label>
-              <input>
+              <input ng-model = "vm.questions[0].questionHeader" ng-required = "true">
             </md-input-container>
           </div>
           <div>
             <!-- fix only one at a time -->
             <p>Selected Answer Type: </p>
-            <md-radio-group>
-              <md-radio-button>
+            <md-radio-group ng-model = "vm.questions[0].type">
+              <md-radio-button value = "1">
                 Yes or No
               </md-radio-button>
 
-              <md-radio-button>
+              <md-radio-button value = "2">
                 Scale from 1 to 5
               </md-radio-button>
 
-              <md-radio-button>
-                Write Answer
+              <md-radio-button value = "3">
+                Written Answer
               </md-radio-button>
             </md-radio-group>
           </div>
 
-          <div layout = "row">
-            <md-button>
-              Cancel
-            </md-button>
-            <md-button>
-              Another Question
-            </md-button>
-            <md-button>
-              Save
-            </md-button>
+        </md-content>
 
+        <md-content ng-if = "vm.second" layout-padding>
+          <div layout ="row">
+
+            <md-input-container layout-padding class "md-block" flex= "80">
+              <label>Question 2</label>
+              <input ng-model = "vm.questions[1].question" ng-required = "true">
+            </md-input-container>
+
+            <md-input-container layout-padding class "md-block" flex ="20">
+              <label>Question Header </label>
+              <input ng-model = "vm.questions[1].questionHeader" ng-required = "true">
+            </md-input-container>
+          </div>
+          <div>
+            <!-- fix only one at a time -->
+            <p>Selected Answer Type: </p>
+            <md-radio-group ng-model = "vm.questions[1].type" ng-required = "true">
+              <md-radio-button value = "1">
+                Yes or No
+              </md-radio-button>
+
+              <md-radio-button value ="2">
+                Scale from 1 to 5
+              </md-radio-button>
+
+              <md-radio-button value = "3">
+                Written Answer
+              </md-radio-button>
+            </md-radio-group>
+          </div>
+
+        </md-content>
+
+        <md-content ng-if = "vm.third" layout-padding>
+          <div layout ="row">
+
+            <md-input-container layout-padding class "md-block" flex= "80">
+              <label>Question 3</label>
+              <input ng-model = "vm.questions[2].question" ng-required = "true">
+            </md-input-container>
+
+            <md-input-container layout-padding class "md-block" flex ="20">
+              <label>Question Header </label>
+              <input ng-model = "vm.questions[2].questionHeader" ng-required = "true">
+            </md-input-container>
+          </div>
+          <div>
+            <!-- fix only one at a time -->
+            <p>Selected Answer Type: </p>
+            <md-radio-group ng-model = "vm.questions[2].type" ng-required = "true">
+              <md-radio-button value = "1">
+                Yes or No
+              </md-radio-button>
+
+              <md-radio-button value = "2">
+                Scale from 1 to 5
+              </md-radio-button>
+
+              <md-radio-button value = "3">
+                Written Answer
+              </md-radio-button>
+            </md-radio-group>
+          </div>
+
+        </md-content>
+
+        <md-content ng-if = "vm.fourth" layout-padding>
+          <div layout ="row">
+
+            <md-input-container layout-padding class "md-block" flex= "80">
+              <label>Question 4</label>
+              <input ng-model = "vm.questions[3].question" ng-required = "true">
+            </md-input-container>
+
+            <md-input-container layout-padding class "md-block" flex ="20">
+              <label>Question Header </label>
+              <input ng-model = "vm.questions[3].questionHeader" ng-required = "true">
+            </md-input-container>
+          </div>
+          <div>
+            <!-- fix only one at a time -->
+            <p>Selected Answer Type: </p>
+            <md-radio-group ng-model = "vm.questions[3].type" ng-required = "true">
+              <md-radio-button value = "1">
+                Yes or No
+              </md-radio-button>
+
+              <md-radio-button value = "2">
+                Scale from 1 to 5
+              </md-radio-button>
+
+              <md-radio-button value = "3">
+                Written Answer
+              </md-radio-button>
+            </md-radio-group>
+          </div>
+
+        </md-content>
+
+        <md-content ng-if = "vm.fifth" layout-padding>
+          <div layout ="row">
+
+            <md-input-container layout-padding class "md-block" flex= "80">
+              <label>Question 5</label>
+              <input ng-model = "vm.questions[4].question" ng-required = "true">
+            </md-input-container>
+
+            <md-input-container layout-padding class "md-block" flex ="20">
+              <label>Question Header </label>
+              <input ng-model = "vm.questions[4].questionHeader" ng-required = "true">
+            </md-input-container>
+          </div>
+          <div>
+            <!-- fix only one at a time -->
+            <p>Selected Answer Type: </p>
+            <md-radio-group ng-model = "vm.questions[4].type" ng-required = "true">
+              <md-radio-button value = "1">
+                Yes or No
+              </md-radio-button>
+
+              <md-radio-button value = "2">
+                Scale from 1 to 5
+              </md-radio-button>
+
+              <md-radio-button value = "3">
+                Written Answer
+              </md-radio-button>
+            </md-radio-group>
           </div>
 
         </md-content>
 
 
-        <!--
-        <div layout-gt-sm="row">
-          <md-input-container class="md-block" flex-gt-sm="">
-            <label>City</label>
-            <input ng-model="">
-          </md-input-container>
 
-          <md-input-container class="md-block" flex-gt-sm="">
-            <label>State</label>
-            <md-select ng-model="">
-              <md-option ng-repeat="" value="">
 
-              </md-option>
-            </md-select>
-          </md-input-container>
 
-          <md-input-container class="md-block" flex-gt-sm="">
-            <label>Postal Code</label>
-            <input name="postalCode" ng-model="" placeholder="12345" required=""  md-maxlength="5">
 
-            <div ng-messages="userForm.postalCode.$error" role="alert" multiple="">
-              <div ng-message="required" class="my-message">You must supply a postal code.</div>
-              <div ng-message="pattern" class="my-message">That doesn't look like a valid postal
-                code.
-              </div>
-              <div ng-message="md-maxlength" class="my-message">
-                Don't use the long version silly...we don't need to be that specific...
-              </div>
-            </div>
-          </md-input-container>
+        <div layout = "row" layout-padding>
+          <md-button ng-click = "vm.surveyCancel()">
+            Cancel
+          </md-button>
+          <md-button ng-click = "vm.anotherQuestion()" ng-disabled = "vm.fifth">
+            Another Question
+          </md-button>
+          <md-button ng-submit = "vm.saveSurvey()">
+            Save
+          </md-button>
+
         </div>
 
-        <md-input-container class="md-block">
-          <label>Biography</label>
-          <textarea ng-model="user.biography" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
-        </md-input-container>
 
-      -->
       </form>
     </div>
   </md-content>
 
 
 </section>
+
+
+<!--
+<div layout-gt-sm="row">
+  <md-input-container class="md-block" flex-gt-sm="">
+    <label>City</label>
+    <input ng-model="">
+  </md-input-container>
+
+  <md-input-container class="md-block" flex-gt-sm="">
+    <label>State</label>
+    <md-select ng-model="">
+      <md-option ng-repeat="" value="">
+
+      </md-option>
+    </md-select>
+  </md-input-container>
+
+  <md-input-container class="md-block" flex-gt-sm="">
+    <label>Postal Code</label>
+    <input name="postalCode" ng-model="" placeholder="12345" required=""  md-maxlength="5">
+
+    <div ng-messages="userForm.postalCode.$error" role="alert" multiple="">
+      <div ng-message="required" class="my-message">You must supply a postal code.</div>
+      <div ng-message="pattern" class="my-message">That doesn't look like a valid postal
+        code.
+      </div>
+      <div ng-message="md-maxlength" class="my-message">
+        Don't use the long version silly...we don't need to be that specific...
+      </div>
+    </div>
+  </md-input-container>
+</div>
+
+<md-input-container class="md-block">
+  <label>Biography</label>
+  <textarea ng-model="user.biography" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
+</md-input-container>
+
+-->

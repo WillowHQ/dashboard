@@ -2,6 +2,23 @@
 <html lang="en">
   <% include dist/view/partials/header.ejs %>
   <body ng-app="app" layout="column">
+    <script>
+      window.fbAsyncInit = function () {
+        FB.init({
+          appId: '237058900007908',
+          xfbml: true,
+          version: 'v2.6'
+        });
+      };
+
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
     <div ng-include="'/dist/view/navbar/toolbar-header.html'"></div>
     <div class="container" layout="row" flex>
       <ng-view layout="" flex>
@@ -17,22 +34,6 @@
     <script type="text/javascript">
       window.user = <%- user || 'null' %>;
     </script>
-    <script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : 'your-app-id',
-      xfbml      : true,
-      version    : 'v2.5'
-    });
-  };
-
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
 </script>
   </body>
   <% include dist/view/partials/footer.ejs %>

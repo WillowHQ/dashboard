@@ -1,0 +1,22 @@
+<md-dialog aria-label="Upload User" flex="80">
+  <form name="userForm" ng-submit="ctrl.save()">
+
+    <md-dialog-content>
+      <div layout="column" layout-padding>
+        <md-input-container>
+          <label>Please paste a CSV of the clients you wish to upload here.</label>
+          <textarea name="userList" ng-model="ctrl.userList" required></textarea>
+        </md-input-container>
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button ng-click="ctrl.cancel()">
+        Cancel
+      </md-button>
+      <md-button type="submit" class="md-primary md-raised" ng-disabled="userForm.$invalid">
+        Save
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

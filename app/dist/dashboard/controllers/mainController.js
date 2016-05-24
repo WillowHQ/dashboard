@@ -3,8 +3,10 @@ var app;
 (function (app) {
     var dashboard;
     (function (dashboard) {
+        var userSelected;
+        var scope;
         var MainController = (function () {
-            function MainController(userService, $mdSidenav, $mdBottomSheet, $mdToast, $mdDialog, $mdMedia, $http) {
+            function MainController($scope, userService, $mdSidenav, $mdBottomSheet, $mdToast, $mdDialog, $mdMedia, $http) {
                 this.userService = userService;
                 this.$mdSidenav = $mdSidenav;
                 this.$mdBottomSheet = $mdBottomSheet;
@@ -17,9 +19,22 @@ var app;
                 this.selected = null;
                 this.newNote = new dashboard.Note('', null);
                 this.newReminder = new dashboard.Reminder('', null);
-                this.question = 0
+
                 //this.socket = io.connect('http://localhost:3001');
-                this.questions = [1, 2, 3, 4, 5];
+
+
+
+                //this.questions = [1, 2, 3, 4, 5];
+
+
+
+                //Survey Stuff
+                this.first = true;
+                this.second = false;
+                this.third = false;
+                this.four = false;
+                this.fifth = false;
+
                 var self = this;
                 this.user = this.userService.get();
                 if (this.user.role == "user") {
@@ -30,6 +45,8 @@ var app;
                     self.selected = this.clients[0];
                 }
                 self.userService.selectedUser = self.selected;
+                userSelected = self.userService.selectedUser;
+                scope = $scope;
                 this._ = window['_'];
 
             }
@@ -52,6 +69,53 @@ var app;
             };
 
 
+            MainController.prototype.anotherQuestion = function($event){
+              var _this = this;
+              var self = this;
+              if(this.first){
+                this.first = false;
+                this.second = true;
+                self.openToast("Next Question");
+              }
+              else if(this.second){
+                this.second = false;
+                this.third = true;
+                self.openToast("Next Question");
+              }
+              else if(this.third){
+                this.third = false;
+                this.fourth = true;
+                self.openToast("Next Question");
+              }
+              else if(this.fourth){
+                this.fourth = false;
+                this.fifth = true;
+                self.openToast("Next Question");
+              }
+
+            }
+
+            MainController.prototype.saveSurvey = function($event){
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //not used
             MainController.prototype.buildSurvey = function($event){
               var _this = this;
               var self = this;
@@ -124,23 +188,25 @@ var app;
                     //  console.log('The user\'s _id is: ' + response.data._id);
                       //this.user.clients.push(response.data.id);
 
-                      console.log("done");
-                      _this.$http.post('/api/coach/newuser/' + this.user.id + '?' + response.data.id,  user).then(function successCallback(client){
-                        console.log("done2");
-                        self.user.clients.push(response.data);
-                        console.log("User created:")
-                        console.log(response.data);
-                      });
+                      if (response.data.id) {
+                        console.log("done");
+                        _this.$http.post('/api/coach/newuser/' + this.user.id + '?' + response.data.id,  user).then(function successCallback(client){
+                          console.log("done2");
+                          self.user.clients.push(response.data);
+                          console.log("User created:")
+                          console.log(response.data);
+                          self.openToast("User added");
+                        });
+                      } else {
+                        self.openToast('User not added. ' + response.data.errors.password.message);
+                      }
 
                     });
-
-                    self.openToast("User added");
                 }, function () {
                     console.log('You cancelled the dialog.');
                 });
             };
 
-            // TODO: possibly remove if unnecessary.
             MainController.prototype.addOrUploadUser = function ($event) {
               var _this = this;
               var self = this;
@@ -153,12 +219,69 @@ var app;
                 controllerAs: "ctrl",
                 clickOutsideToClose: true,
                 fullscreen: useFullScreen
-              }).then(function (user) {
-
+              }).then(function (add) {
+                if (add) {
+                  console.log('You wish to add a new user.');
+                  _this.addUser($event);
+                } else {
+                  console.log('You wish to upload a list of existing users.');
+                  _this.uploadUsers($event);
+                }
               }, function () {
                 console.log('You cancelled the dialog.');
-              })
+              });
             };
+
+            MainController.prototype.uploadUsers = function ($event) {
+              var _this = this;
+              var self = this;
+              var useFullScreen = (this.$mdMedia('sm') || this.$mdMedia('xs'));
+              this.$mdDialog.show({
+                templateUrl: './dist/view/dashboard/user/uploadUsersDialog.html',
+                parent: angular.element(document.body),
+                targetEvent: $event,
+                controller: dashboard.UploadUserDialogController,
+                controllerAs: 'ctrl',
+                clickOutsideToClose: true,
+                fullscreen: useFullScreen
+              }).then(function (userList) {
+                // Post to parser
+                _this.$http.post('/api/user/parse-csv', {textToParse: userList}).then(function (response) {
+                  // Post to backend
+                  var avatars = [
+                    'ashley.png', 'james.png', 'jenn.png', 'jo.png', 'john.png', 'julie.png', 'mamajess.png', 'sharon.png'
+                  ];
+                  for (var i = 0; i < response.data.length; i++) {
+                    var user = {
+                      firstName: response.data[i][0],
+                      lastName: response.data[i][1],
+                      bio: response.data[i][2],
+                      username: response.data[i][3],
+                      password: response.data[i][4],
+                      slack_id: response.data[i][5],
+                      slack: {
+                        email: response.data[i][6],
+                        id: response.data[i][7],
+                        name: response.data[i][8],
+                        real_name: response.data[i][9],
+                        img: '/assets/img/' + avatars[Math.floor(Math.random() * 7)]
+                      },
+                      coaches: _this.user._id,
+                      imgUrl: '/assets/img' + avatars[Math.floor(Math.random() * 7)],
+                      phoneNumber: response.data[i][10]
+                    };
+                    _this.$http.post('/api/user/create', user).then(function (response) {
+                      _this.$http.post('/api/coach/newuser/' + this.user.id + '?' + response.data.id, user).then(function (client) {
+                        self.user.clients.push(response.data);
+                      });
+                    });
+                  }
+                });
+              }, function () {
+                console.log('You cancelled the dialog.');
+              });
+            };
+
 
             MainController.prototype.addReminder = function ($event) {
                 var _this = this;
@@ -400,16 +523,47 @@ var app;
               });
             };
 
+            MainController.prototype.sendFB = function (message) {
+              var _this = this;
+              console.log('Begin submit');
+              console.log('this.selected: ' + JSON.stringify(this.selected));
+              this.$http.post('/api/message/sendfb/', {'body': message, 'sentBy': this.selected.coaches[0], 'sentTo': this.selected.id}).then(function (response) {
+                console.log('response.data is ' + JSON.stringify(response.data));
+                console.log(_this.selected.messages);
+                _this.selected.messages.push(response.data);
+                console.log('self.selected is: ' + JSON.stringify(_this.selected.messages));
+              });
+            };
+
             // socket.io code ahead
             socket.on('message', function (message) {
+              console.log('Server sent a message');
+              MainController.prototype.receiveMessage(message);
+            });/*function (message) {
+              console.log(this.selected);
+              console.log('Message received from server');
               console.log(message);
               if (this.selected) {
+                console.log(this.selected._id);
                 if (this.selected._id == message.sentBy) {
                   console.log('Message pushed.');
                   this.selected.messages.push(message);
                 }
               }
-            });
+            });*/
+
+            MainController.prototype.receiveMessage = function (message) {
+              console.log('userSelected is: ' + JSON.stringify(userSelected));
+              console.log('Message received from server');
+              console.log(message);
+              //if (this.selected) {
+                if (userSelected._id === message.sentBy) {
+                  console.log('Message pushed.');
+                  userSelected.messages.push(message);
+                  scope.$apply();
+                }
+              //}
+            };
 
             MainController.prototype.editNote = function($event, note){
               var _this = this;
@@ -639,6 +793,7 @@ var app;
             MainController.prototype.selectUser = function (user) {
                 this.selected = user;
                 this.userService.selectedUser = this.selected;
+                userSelected = user;
                 var sidebar = this.$mdSidenav('left');
                 if (sidebar.isOpen()) {
                     sidebar.close();
@@ -690,7 +845,7 @@ var app;
                     clickedItem && console.log(clickedItem.name + ' clicked!');
                 });
             };
-            MainController.$inject = ['userService', '$mdSidenav', '$mdBottomSheet',
+            MainController.$inject = ['$scope', 'userService', '$mdSidenav', '$mdBottomSheet',
                 '$mdToast', '$mdDialog', '$mdMedia', '$http'];
             return MainController;
         }());
