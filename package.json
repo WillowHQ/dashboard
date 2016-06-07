@@ -2,9 +2,12 @@
   "name": "contact-manager",
   "private": true,
   "version": "0.0.1",
+  "engines": {
+    "node": "4.4.4",
+    "npm": "2.1.x"
+  },
   "scripts": {
-    "postinstall": "bower update",
-    "prestart": "npm update"
+    "start": "node --harmony app.js"
   },
   "description": "Contact Manager",
   "license": "MIT",
@@ -34,12 +37,13 @@
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "gulp-install": "~0.6.0",
-    "messenger-bot": "^2.3.0",
+    "hooker": "^0.2.3",
     "method-override": "^2.3.5",
     "moment": "^2.12.0",
     "mongoose": "^4.4.8",
     "mongoose-deep-populate": "^3.0.0",
     "morgan": "^1.7.0",
+    "node-schedule": "^1.1.0",
     "nodemailer": "^2.3.0",
     "nodemailer-smtp-transport": "^2.4.1",
     "passport": "^0.3.2",
@@ -50,11 +54,14 @@
     "passport-slack": "0.0.6",
     "passport-twitter": "^1.0.4",
     "path": "^0.12.7",
-    "request": "^2.69.0",
+    "pb-node": "^2.0.1",
+    "request": "^2.72.0",
     "request-promise": "^3.0.0",
     "socket.io": "^1.4.6",
     "twilio": "^2.9.1",
     "underscore": "^1.8.3",
-    "url": "^0.11.0"
+    "url": "^0.11.0",
+    "written-number": "^0.2.4",
+    "xmlbuilder": "^8.2.2"
   }
 }

@@ -1,7 +1,7 @@
 <section>
 
 
-    <div md-whiteframe = "2" layout = "row" layout-padding style="background-color: white; margin: 5px;" >
+    <div  layout = "row" layout-padding style="background-color: white; margin: 5px;" >
 
         <div md-whiteframe = "3"  flex = "15" layout = "column" style="background-color: #C3E1EE; margin: 5px;"  >
           <div ng-if="vm.isCoach(vm.selected)">
@@ -10,19 +10,18 @@
               <h1>{{vm.selected.username}}</h1>
             </md-content>
           </div>
-
+          <!-- change this -->
           <div ng-if="!vm.isCoach(vm.selected)">
-            <img ng-src="{{vm.selected.slack.img}}" class="avatar"></md-icon>
-            <h1 ng-if="vm.hasReal(vm.selected)">
-              {{vm.selected.slack.real_name}}
-            </h1>
-            <h1 ng-if="!vm.hasReal(vm.selected)">
-              {{vm.selected.slack.name}}
-            </h1>
+            <img ng-src="{{vm.selected.imgUrl}}" class="avatar"></md-icon>
+            <md-content style="background-color: #C3E1EE; margin: 5px;">
+              <h1>
+                {{vm.selected.firstName +" "+ vm.selected.lastName}}
+              </h1>
+            </md-content>
           </div>
-          <h1 ng-if="vm.isUser">{{vm.selected.username}}</h1>
-
-        </div>
+          <!--<h1 ng-if="vm.isUser">{{vm.selected.username}}</h1>
+          -->
+        </div><!--
         <div md-whiteframe = "3"  flex = "5" layout = "column" style = "background-color: #C3E1EE; margin: 5px;">
 
             <md-icon md-font-set = "material-icons"> mail </md-icon>
@@ -33,6 +32,7 @@
 
             <md-icon md-font-set = "material-icons"> info </md-icon>
         </div>
+      -->
         <div  md-whiteframe = "3"  flex = "80" layout = "row" style = "background-color: #C3E1EE; margin: 5px;"  >
           <md-content flex  layout style = "height: 200px; background-color: #C3E1EE;">
 
@@ -41,8 +41,10 @@
                 <textarea ng-model="vm.selected.bio" md-select-on-focus ng-blur = "vm.addBio()"></textarea>
               </md-input-container>
 
+            <md-input-container layout="column" flex="95" style="height: 150px">
               <label>Phone Number</label>
-              <p>{{vm.selected.phoneNumber || "Phone number doesn't exist"}}</p>
+              <textarea ng-model="vm.selected.phoneNumber" md-select-on-focus ng-blur="vm.addPhoneNumber()"></textarea>
+            </md-input-container>
 
           </md-content>
 

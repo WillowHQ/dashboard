@@ -1,6 +1,6 @@
 <md-virtual-repeat-container id="vertical-container" scroll-glue>
     <p ng-if="!vm.selected.messages.length">
-      No messages for {{vm.selected.slack.name}}, yet.
+      No messages for {{vm.selected.firstName +" "+ vm.selected.lastName}}, yet.
     </p>
     <p md-virtual-repeat="message in vm.selected.messages" class="repeated-item" flex>
       <span ng-if="message.sentTo === vm.selected._id">
@@ -20,6 +20,6 @@
     Send (SMS)
   </md-button>
   <md-button type="submit" class="md-primary md-raised" ng-disabled="!message.content" ng-click="vm.sendFB(message.content); message.content=''">
-    Send (Messenger)
+    Send (Messenger) -- Coming soon
   </md-button>
 </form>

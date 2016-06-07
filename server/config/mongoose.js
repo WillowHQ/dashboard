@@ -8,7 +8,7 @@ var	config = require('./config'),
 // Define the Mongoose configuration method
 module.exports = function() {
 	// Use Mongoose to connect to MongoDB
-	var db = mongoose.connect(config.db);
+	var db = mongoose.connect(config.db, { server: { reconnectTries: Number.MAX_VALUE } });
 
 	// Load the 'User' model
 	//not sure why this is here ...

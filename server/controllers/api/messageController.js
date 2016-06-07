@@ -3,6 +3,7 @@
 var mongooose = require('mongoose');
 var Message = require('../../models/message.js');
 var User = require('../../models/user.js');
+var Reminder = require('../../models/reminder.js');
 var _ = require('underscore');
 var moment = require('moment');
 var Promise = require('bluebird');
@@ -11,14 +12,14 @@ var twilio = require('twilio')('ACf83693e222a7ade08080159c4871c9e3', '20b36bd42a
 var twiml = require('twilio');
 var app = require('express')();
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var Http = require('http');
+var io = require('socket.io')(3854);
 var bodyParser = require('body-parser');
-var Bot = require('messenger-bot');
+//var Bot = require('messenger-bot');
+var config = require('../../config/env/development.js');
 
-http.listen(3001, function() {
-  console.log('listening for websocket connections on *:3001');
-});
+//http.listen(3853, function () {
+  console.log('listening for websocket connections on *:3854');
+//});
 
 // a list of currently connected sockets
 var sockets = [];
@@ -32,9 +33,9 @@ io.on('connection', function (socket) {
   });
 });
 
-let bot = new Bot({
-  token: 'EAADXmpOGmZBQBAP1nUwAntcZAU8gO7Md7y1FWsy2TGJPKIB434MgCg7v22OiKBo9zZBxGwo0QiL1Nlz9zcWbmB7dsoFqZCt5DsQASqfNZBcynJv1aZCP8C96J7gyFNSu1E3VjqskMguW2ZBOTa9whpa4SQOjXZB7RaegrZAEASwwz7AZDZD',
-  verify: 'supersecrettoken'
+/*var bot = new Bot({
+  token: 'EAADXmpOGmZBQBAFZBq02j4QbdEkEGp6G9bZAYjKJielJusP9zkeXHPyEOXqiCLXQUZCZClGxEeBL5n1ZA5ybAJFChpUfRZARZCZAMBvXM25zvQxP3vpUS8eZA5Oo3m8qtyfQLFfflyyIG1H0L89OIBTKJUZCeuNrNFDqNqo0c3KWiFcPQZDZD',
+  verify: 'fishisokay'
 });
 
 bot.on('error', function (err) {
@@ -42,8 +43,11 @@ bot.on('error', function (err) {
 });
 
 bot.on('message', function (payload, reply) {
-  let text = payload.message.text;
 
+  var text = payload.message.text;
+  console.log();
+  console.log(JSON.stringify(payload));
+  console.log();
   var message = Message({
     body: text,
     sentTo: '',
@@ -74,11 +78,11 @@ bot.on('message', function (payload, reply) {
     });
     /*reply({ text }, function (err) {
       if (err) throw err;
-    });*/
+    });/
   });
 });
-
-app.use(bodyParser.json());
+*/
+/*app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
@@ -87,13 +91,15 @@ app.get('/', function (req, res) {
   return bot._verify(req, res);
 });
 
-app.post('/', function (req, res) {
+app.post('/facebook/receive', function (req, res) {
   bot._handleMessage(req.body);
   res.end(JSON.stringify({status: 'ok'}));
 });
 
 Http.createServer(app).listen(3003);
 console.log('Listening for Facebook messages on *:3003');
+*/
+
 
 /*// sockets a list of currently connected sockets
 var sockets = [];
@@ -107,9 +113,9 @@ io.on('connection', function (socket) {
   });
 });*/
 
-exports.sendFB = function (req, res) {
+/*exports.sendFB = function (req, res) {
   var message = new Message(req.body);
-  console.log('Begin sendSMS');
+  console.log('Begin sendFB');
 
   message.save(function(err, message) {
     if (!err) {
@@ -121,6 +127,8 @@ exports.sendFB = function (req, res) {
           if (err) {
             console.log(err);
           } else {
+            console.log('User\'s fb is is: ' + user.facebookId);
+            console.log('message.body is: ' + message.body);
             bot.sendMessage(user.facebookId, {text: message.body}, function (err, info) {
               console.log(JSON.stringify(info));
             });
@@ -131,7 +139,7 @@ exports.sendFB = function (req, res) {
     }
   });
 };
-
+*/
 exports.sendSMS = function (req, res) {
   var message = new Message(req.body);
   console.log('Begin sendSMS');
@@ -156,7 +164,7 @@ exports.sendSMS = function (req, res) {
               if (!err) {
                 twilio.sendMessage({
                   to: userSentTo.phoneNumber,
-                  from: '+12898062194',
+                  from: config.phoneNumbers.messages,
                   body: message.body
                 }, function (err, responseData) {
                   if (!err) {
@@ -187,47 +195,68 @@ exports.receiveSMS = function (req, res) {
   console.log('req.body.From is: ' + req.body.From);
   // Find user by phone num and actually create valid message object
   User.findOne({phoneNumber: req.body.From}, function (err, user) {
-    var message = new Message({
-      body: req.body.Body,
-      sentBy: user._id,
-      sentTo: '5741ef7c5254295828d8c3b0'
-    });
-    User.findOneAndUpdate(
-      {phoneNumber: req.body.From},
-      {$push: {messages: message}},
-      {safe: true},
-      function (err, user) {
-        if (!err) {
-          console.log('The user with that phone number is: ' + user.slack.name);
-          io.emit('message', message);
-          console.log('Message saved and pushed to user');
-        }
-      });
+    console.log('User is: ' + JSON.stringify(user));
+    /*Reminder.findById(user.reminders[user.reminders.length - 1], function (err, reminder) {
+    if (reminder && reminder.needsResponse) {
+    console.log(JSON.stringify(reminder));
+    console.log(JSON.stringify(reminder.responses));
+    console.log('This should not print the user with the phone number.');
+    reminder.needsResponse = false;
+    reminder.responses.push({
+    response: req.body.Body,
+    createdBy: user._id
   });
-  /*User.findByPhoneNumber(req.body.From, function (err, user) {
+  reminder.save();
+  console.log('Reminder saved as: ' + JSON.stringify(reminder));
+  user.reminders[user.reminders.length - 1].responses.push(reminder);
+  user.save();
+  console.log('User saved as: ' + JSON.stringify(user));
+  io.emit('response', reminder);
+} else {*/
+console.log('We should be adding a message');
+var message = new Message({
+  body: req.body.Body,
+  sentBy: user._id,
+  sentTo: '5741ef7c5254295828d8c3b0'
+});
+User.findOneAndUpdate(
+  {phoneNumber: req.body.From},
+  {$push: {messages: message}},
+  {safe: true},
+  function (err, user) {
     if (!err) {
-      console.log("The user with that phone number is: " + user.slack.name);
-      message.save(function (err, message) {
-        console.log('Message saved');
-        if (!err) {
-          User.findByIdAndUpdate(
-            message.sentBy,
-            {$push: {"messages": message}},
-            {safe: true},
-            function (err, user) {
-              if (err) {
-                console.log(err);
-              } else {
-                console.log('Message saved and pushed to user, at least theoretically.');
-              }
-            }
-          )
-        }
-      });
+      console.log('The user with that phone number is: ' + user.slack.name);
+      io.emit('message', message);
+      console.log('Message saved and pushed to user');
     }
-  });*/
-  //console.log(JSON.stringify(req.body));
-  res.end(resp.toString());
+  });
+  //}
+  //});
+});
+/*User.findByPhoneNumber(req.body.From, function (err, user) {
+if (!err) {
+console.log("The user with that phone number is: " + user.slack.name);
+message.save(function (err, message) {
+console.log('Message saved');
+if (!err) {
+User.findByIdAndUpdate(
+message.sentBy,
+{$push: {"messages": message}},
+{safe: true},
+function (err, user) {
+if (err) {
+console.log(err);
+} else {
+console.log('Message saved and pushed to user, at least theoretically.');
+}
+}
+)
+}
+});
+}
+});*/
+//console.log(JSON.stringify(req.body));
+res.end(resp.toString());
 }
 /*
 exports.sendFB = function (req, res) {

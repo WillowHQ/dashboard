@@ -19,24 +19,22 @@ var app;
                 this.selected = null;
                 this.newNote = new dashboard.Note('', null);
                 this.newReminder = new dashboard.Reminder('', null);
+                
 
                 //this.socket = io.connect('http://localhost:3001');
 
+                //Survey stuff
+                this.questions1 = [{type: "Yes/No"},{type:"Scale from 1 to 5"},{type:"Written Answer"}];
+                this.counter = 0;
+                this.questionAmount = [0];
+                this.selectSurveyUser = [];
 
 
-                //this.questions = [1, 2, 3, 4, 5];
 
-
-
-                //Survey Stuff
-                this.first = true;
-                this.second = false;
-                this.third = false;
-                this.four = false;
-                this.fifth = false;
 
                 var self = this;
                 this.user = this.userService.get();
+
                 if (this.user.role == "user") {
                     self.selected = this.user;
                 }
@@ -57,87 +55,218 @@ var app;
             // }
 
             //create a different controller
-            MainController.prototype.createSurvey = function($event){
-              console.log("here");
-
-            };
-
-
 
             MainController.prototype.setFormScope = function (scope) {
                 this.formScope = scope;
             };
 
 
-            MainController.prototype.anotherQuestion = function($event){
+            MainController.prototype.anotherQuestion = function(questionNum){
               var _this = this;
               var self = this;
-              if(this.first){
-                this.first = false;
-                this.second = true;
-                self.openToast("Next Question");
-              }
-              else if(this.second){
-                this.second = false;
-                this.third = true;
-                self.openToast("Next Question");
-              }
-              else if(this.third){
-                this.third = false;
-                this.fourth = true;
-                self.openToast("Next Question");
-              }
-              else if(this.fourth){
-                this.fourth = false;
-                this.fifth = true;
-                self.openToast("Next Question");
-              }
+              this.questionAmount.push(++this.counter);
+              self.openToast("Next Question");
+              };
 
-            }
+              MainController.prototype.saveSurvey = function($event){
+                var _this = this;
+                var self = this;
+                console.log("hey");
+                console.log(this.questions);
+                for (var key in this.questions) {
+                  this.questions[key].responses = [];
+                }
+                var questions = [];
+                for (var key in this.questions) {
+                  questions.push(this.questions[key]);
+                }
+                var surveyTemplate = {
+                  title: this.surveyTitle,
+                  questions : questions,
+                  author : this.user._id
+                };
+                console.log(surveyTemplate);
 
-            MainController.prototype.saveSurvey = function($event){
-
-            }
-
-
-
+                _this.$http.post('/api/surveyTemplate/create', surveyTemplate).then(function successCallback(response) {
+                console.log(response.data);
+                console.log(this.user);
+                this.user.surveyTemplates.push(response.data);
 
 
+                console.log("reseting save!");
+
+                console.log("HEWGFRBHI");
+
+                });
+                console.log(this.questions);
+                this.questions = null;
+                this.surveyTitle = null;
+                this.counter = 0;
+                this.questionAmount = null;
+                this.questionAmount = [
+                  0
+                ];
+
+                self.openToast("Survey Created");
+
+              };
+
+              MainController.prototype.cancelSurvey = function($event){
+                var _this = this;
+                var self = this;
+                console.log("Cancel!");
+                console.log(this.questions);
+                this.questions = null;
+                this.surveyTitle = null;
+                this.counter = 0;
+                this.questionAmount = null;
+                this.questionAmount = [
+                  0
+                ];
+
+                self.openToast("Cancel Survey");
 
 
+              };
 
-
-
-
-
-
-
-
-
-
-            //not used
-            MainController.prototype.buildSurvey = function($event){
-              var _this = this;
-              var self = this;
-              console.log("Here");
-              var useFullScreen = (this.$mdMedia('sm') || this.$mdMedia('xs'));
-              this.$mdDialog.show({
-                  templateUrl: './dist/view/dashboard/surveyBuilder/surveyBuilderModal.html',
-                  parent: angular.element(document.body),
-                  targetEvent: $event,
-                  controller: dashboard.SurveyBuilderController,
-                  controllerAs: "ctrl",
-                  clickOutsideToClose: true,
-                  fullscreen: useFullScreen,
-                  locals: {
-                    selected: null
+              MainController.prototype.toggle = function (item, list) {
+                  var idx = list.indexOf(item);
+                  if (idx > -1)
+                      list.splice(idx, 1);
+                  else
+                      list.push(item);
+              };
+              ;
+              MainController.prototype.exists = function (item, list) {
+                  return list.indexOf(item) > -1;
+              };
+              ;
+              MainController.prototype.toggleAll = function () {
+                  if (this.selectSurveyUser.length === this.user.clients.length) {
+                    this.selectSurveyUser = [];
                   }
-              }).then(function (survey) {
-                console.log("this is where the survey would be sent to a single person for the time being");
+                  else if (this.selectSurveyUser.length === 0 || this.selectSurveyUser.length > 0) {
+                    this.selectSurveyUser = this.user.clients.slice(0);
+                  }
+              };
+              ;
+              MainController.prototype.isChecked = function () {
+                  return this.selectSurveyUser.length === this.user.clients.length;
+              };
+              ;
+              MainController.prototype.isIndeterminate = function () {
+                  return (this.selectSurveyUser.length  !== 0 &&
+                      this.selectSurveyUser.length  !== this.user.clients.length);
+              };
+              ;
+
+              MainController.prototype.sendOutSurvey = function ($event) {
+                console.log("here");
+                var _this = this;
+                var self = this;
+                console.log("Here");
+                var useFullScreen = (this.$mdMedia('sm') || this.$mdMedia('xs'));
+                this.$mdDialog.show({
+                    templateUrl: './dist/view/dashboard/surveys/selectorModal.html',
+                    parent: angular.element(document.body),
+                    targetEvent: $event,
+                    controller: dashboard.SurveySelectorController,
+                    controllerAs: "ctrl",
+                    clickOutsideToClose: true,
+                    fullscreen: useFullScreen,
+                    locals: {
+                      selected: null
+                    }
+                }).then(function (surveyInfo) {
+                  console.log("this is where the survey would be sent to a single person for the time being");
+                  console.log();
+                  console.log('The times to receive this survey is: ');
+                  console.log(surveyInfo);
+                  console.log('this.selectedSurvey is: ');
+                  console.log(_this.selectedSurvey);
+                  _this.selectedSurvey.daysOfTheWeek = {};
+                  _this.selectedSurvey.selectedDays = surveyInfo.selectedDays;
+                  _this.selectedSurvey.days = [];
+                  if (_this._.contains(_this.selectedSurvey.selectedDays, 'Sun')) {
+                    _this.selectedSurvey.daysOfTheWeek.sunday = true;
+                    _this.selectedSurvey.days.push(0);
+                  }
+                  if (_this._.contains(_this.selectedSurvey.selectedDays, 'Mon')) {
+                    _this.selectedSurvey.daysOfTheWeek.monday = true;
+                    _this.selectedSurvey.days.push(1);
+                  }
+                  if (_this._.contains(_this.selectedSurvey.selectedDays, 'Tues')) {
+                    _this.selectedSurvey.daysOfTheWeek.tuesday = true;
+                    _this.selectedSurvey.days.push(2);
+                  }
+                  if (_this._.contains(_this.selectedSurvey.selectedDays, 'Wed')) {
+                    _this.selectedSurvey.daysOfTheWeek.wednesday = true;
+                    _this.selectedSurvey.days.push(3);
+                  }
+                  if (_this._.contains(_this.selectedSurvey.selectedDays, 'Thurs')) {
+                    _this.selectedSurvey.daysOfTheWeek.thursday = true;
+                    _this.selectedSurvey.days.push(4);
+                  }
+                  if (_this._.contains(_this.selectedSurvey.selectedDays, 'Fri')) {
+                    _this.selectedSurvey.daysOfTheWeek.friday = true;
+                    _this.selectedSurvey.days.push(5);
+                  }
+                  if (_this._.contains(_this.selectedSurvey.selectedDays, 'Sat')) {
+                    _this.selectedSurvey.daysOfTheWeek.saturday = true;
+                    _this.selectedSurvey.days.push(6);
+                  }
+                  _this.selectedSurvey.timeOfDay = surveyInfo.time;
+                  _this.selectedSurvey.hour = _this.selectedSurvey.timeOfDay.getHours();
+                  _this.selectedSurvey.minute = _this.selectedSurvey.timeOfDay.getMinutes();
+                  _this.selectedSurvey.repeat = surveyInfo.repeat;
+                  _this.selectedSurvey.selectedUsers = [];
+                  for (var i = 0; i < _this.selectSurveyUser.length; i++) {
+                    _this.selectedSurvey.selectedUsers.push(_this.selectSurveyUser[i]._id);
+                  }
+                  console.log();
+                  console.log(_this.selectedSurvey.selectedUsers);
+                  console.log();
+                  _this.$http.post('/api/surveyTemplate/schedule', _this.selectedSurvey).then(function (response) {
+                    console.log(response.data);
+                  });
+                });
 
 
-              });
-            };
+              };
+
+              MainController.prototype.previewSurvey = function ($event) {
+                console.log("here");
+                var _this = this;
+                var self = this;
+                console.log("Here");
+                console.log(this.selectedSurvey);
+                var useFullScreen = (this.$mdMedia('sm') || this.$mdMedia('xs'));
+                /*this.$mdDialog.show({
+                    templateUrl: './dist/view/dashboard/surveys/previewModal.html',
+                    parent: angular.element(document.body),
+                    targetEvent: $event,
+                    controller: dashboard.MainController,
+                    controllerAs: "vm",
+                    clickOutsideToClose: true,
+                    fullscreen: useFullScreen,
+                    locals: {
+                      selected: null
+                    }
+                });*/
+                this.$http.post('/api/surveyTemplate/preview', this.selectedSurvey).then(function (response) {
+                  console.log('Previewing survey');
+                  console.log(response.data);
+                });
+                console.log("here2");
+
+              };
+
+
+
+
+
+
+
 
 
 
@@ -165,9 +294,22 @@ var app;
 
             };
 
+            MainController.prototype.addPhoneNumber = function ($event) {
+              var _this = this;
+              var self = this;
+              var phoneNumber = {
+                number: this.selected.phoneNumber
+              };
+              _this.$http.post('/api/phonenumber/create/' + this.selected.id, phoneNumber).then(function (response) {
+
+              });
+              self.openToast('Phone Number Updated');
+            }
+
             MainController.prototype.addUser = function ($event) {
                 var _this = this;
                 var self = this;
+
                 var useFullScreen = (this.$mdMedia('sm') || this.$mdMedia('xs'));
                 this.$mdDialog.show({
                     templateUrl: './dist/view/dashboard/user/newUserDialog.html',
@@ -195,7 +337,11 @@ var app;
                           self.user.clients.push(response.data);
                           console.log("User created:")
                           console.log(response.data);
-                          self.openToast("User added");
+                          self.openToast("User added And Email Sent!");
+                          _this.$http.post('api/facebook/email/', user).then(function successCallback(response) {
+                            console.log("email done!");
+                            //console.log(response);
+                          });
                         });
                       } else {
                         self.openToast('User not added. ' + response.data.errors.password.message);
@@ -210,6 +356,7 @@ var app;
             MainController.prototype.addOrUploadUser = function ($event) {
               var _this = this;
               var self = this;
+
               var useFullScreen = (this.$mdMedia('sm') || this.$mdMedia('xs'));
               this.$mdDialog.show({
                 templateUrl: './dist/view/dashboard/user/newOrUploadUserDialog.html',
@@ -219,16 +366,47 @@ var app;
                 controllerAs: "ctrl",
                 clickOutsideToClose: true,
                 fullscreen: useFullScreen
-              }).then(function (add) {
-                if (add) {
+              }).then(function (option) {
+                if (option.add) {
                   console.log('You wish to add a new user.');
                   _this.addUser($event);
-                } else {
+                } else if (option.upload) {
                   console.log('You wish to upload a list of existing users.');
                   _this.uploadUsers($event);
+                } else {
+                  console.log('You wish to add a user through facebook.');
+                  _this.addUserThroughFacebook($event);
                 }
               }, function () {
                 console.log('You cancelled the dialog.');
+              });
+            };
+
+            MainController.prototype.addUserThroughFacebook = function ($event) {
+              var _this = this;
+              var self = this;
+              console.log('Begin addUserThroughFacebook');
+              console.log(_this.user);
+              FB.ui({
+                method: 'apprequests',
+                message: 'Welcome to FitPath!'
+              }, function (_response) {
+                console.log(_response);
+                // Loop through all ids in _response.to
+                // This code is vomit-inducing. Blame Facebook.
+                for (var i = 0; i < _response.to.length; i++) {
+                  _this.$http.get('/api/facebook/getprofile/' + _response.to[i] + '/' + _this.user.providerData.accessToken).then(function (response) {
+                    console.log(response);
+                    var user = response.data;
+                    user.coaches = _this.user._id;
+                    _this.$http.post('/api/user/create', user).then(function (__response) {
+                        _this.$http.post('/api/coach/newuser/' + this.user.id + '?' + __response.data.id, user).then(function (client) {
+                          console.log("Here fb");
+                          self.user.clients.push(response.data);
+                        });
+                    });
+                  });
+                }
               });
             };
 
@@ -355,6 +533,7 @@ var app;
             MainController.prototype.editReminder = function ($event, reminder) {
                 var _this = this;
                 console.log('main controller edit reminder');
+                console.log(reminder);
                 var self = this;
                 var useFullScreen = (this.$mdMedia('sm') || this.$mdMedia('xs'));
                 this.$mdDialog.show({
@@ -369,17 +548,21 @@ var app;
                         selected: reminder
                     }
                 }).then(function (reminder) {
+                    console.log(reminder.responses);
+                    console.log(userSelected);
+
                     // Post request, and push onto users local list of reminders
                     // this.$http.post('uri').then((response) => response.data)
                     // after promise is succesful add to
                     // reminder.assigne.reminders.push()
-                    _this.$http.post('/api/reminder/' + reminder._id, reminder).then(function successCallback(reminder) {
+                    _this.$http.post('/api/reminder/update/' + reminder._id, reminder).then(function successCallback(reminder) {
+                        console.log('returned junk: ' + JSON.stringify(reminder.data));
                         //  self.selected.reminders.push(response.data);
                         if (self.updateReminder(reminder.data)) {
-                            if (reminder.data.parent.id) {
+                            /*if (reminder.data.parent.id) {
                                 var id = reminder.data.parent.id.slice(1, 25);
                                 self.updateReminderInSurvey(id, reminder.data);
-                            }
+                            }*/
                             self.openToast("Reminder Edited");
                         }
                         else {
@@ -402,6 +585,7 @@ var app;
                 this.$mdDialog.show(confirm).then(function (result) {
                     console.log(reminder);
                     if (result) {
+                        console.log('removing reminder id: ' + reminder._id);
                         _this.$http.post('/api/reminder/remove/' + reminder._id, reminder)
                             .then(function successCallback(success) {
                             if (success) {
@@ -419,18 +603,23 @@ var app;
             };
 
             MainController.prototype.updateReminder = function (reminder) {
-                console.log(this.selected.reminders);
-                for (var i = 0; i < this.selected.reminders.length; i++) {
-                    if (reminder._id == this.selected.reminders[i]._id) {
-                        this.selected.reminders[i] = reminder;
+                console.log('Inside updateReminder');
+                console.log(userSelected.reminders);
+                console.log(reminder);
+                for (var i = 0; i < userSelected.reminders.length; i++) {
+                    if (reminder._id == userSelected.reminders[i]._id) {
+                        userSelected.reminders[i] = reminder;
+                        console.log(userSelected.reminders);
+                        console.log('Look ma, an update!');
                         return true;
                     }
                 }
                 return false;
             };
             MainController.prototype.deleteReminder = function (reminder) {
-                var foundIndex = this.selected.reminders.indexOf(reminder);
-                this.selected.reminders.splice(foundIndex, 1);
+                this.selected.reminders = _.without(this.selected.reminders, reminder);
+                /*var foundIndex = this.selected.reminders.indexOf(reminder);
+                this.selected.reminders.splice(foundIndex, 1);*/
             };
             MainController.prototype.slackList = function () {
                 // var test = this.userService.slack().then((members: any) => {
@@ -485,7 +674,7 @@ var app;
               var self = this;
               this.$mdDialog.show(confirm).then(function (result) {
               console.log(note);
-
+              console.log(result);
               if (result) {
                 _this.$http.post('/api/note/remove/' + note._id, note)
                   .then(function successCallback(success) {
@@ -506,8 +695,8 @@ var app;
             };
 
             MainController.prototype.deleteNote = function (note) {
-                var note = this.selected.notes.indexOf(note);
-                this.selected.notes.splice(foundIndex, 1);
+              this.selected.notes = _.without(this.selected.notes, note);
+
             };
 
             MainController.prototype.sendMessage = function (message) {
@@ -524,7 +713,7 @@ var app;
             };
 
             MainController.prototype.sendFB = function (message) {
-              var _this = this;
+              /*var _this = this;
               console.log('Begin submit');
               console.log('this.selected: ' + JSON.stringify(this.selected));
               this.$http.post('/api/message/sendfb/', {'body': message, 'sentBy': this.selected.coaches[0], 'sentTo': this.selected.id}).then(function (response) {
@@ -532,11 +721,16 @@ var app;
                 console.log(_this.selected.messages);
                 _this.selected.messages.push(response.data);
                 console.log('self.selected is: ' + JSON.stringify(_this.selected.messages));
-              });
+              });*/
             };
 
+            responseSocket.on('response', function (response) {
+              console.log('Server sent a response');
+              MainController.prototype.updateReminder(response);
+            });
+
             // socket.io code ahead
-            socket.on('message', function (message) {
+            messageSocket.on('message', function (message) {
               console.log('Server sent a message');
               MainController.prototype.receiveMessage(message);
             });/*function (message) {
@@ -566,67 +760,63 @@ var app;
             };
 
             MainController.prototype.editNote = function($event, note){
+              console.log("TETETT");
               var _this = this;
               var self = this;
               console.log(note);
               var useFullScreen = (this.$mdMedia('sm') || this.$mdMedia('xs'));
               this.$mdDialog.show({
-                  templateUrl: './dist/view/dashboard/notes/tab-notes-form-edit.html',
+                  templateUrl: './dist/view/dashboard/notes/noteModal.html',
                   parent: angular.element(document.body),
                   targetEvent: $event,
                   controller: dashboard.NoteController,
                   controllerAs: "ctrl",
                   clickOutsideToClose: true,
-                  fullscreen: useFullScreen
-
+                  fullscreen: useFullScreen,
+                  locals:{
+                      selected: note
+                  }
                 }).then(function (note) {
-                    console.log("Herer ethsi sa");
-                  });
+                  console.log('updating note: ' + note.body);
 
-
-                      // Post request, and push onto users local list of reminders
-                      // this.$http.post('uri').then((response) => response.data)
-                      // after promise is succesful add to
-                  //     // reminder.assigne.reminders.push()
-                  //     _this.$http.post('/api/reminder/' + reminder._id, reminder).then(function successCallback(reminder) {
-                  //         //  self.selected.reminders.push(response.data);
-                  //         if (self.updateReminder(reminder.data)) {
-                  //             if (reminder.data.parent.id) {
-                  //                 var id = reminder.data.parent.id.slice(1, 25);
-                  //                 self.updateReminderInSurvey(id, reminder.data);
-                  //             }
-                  //             self.openToast("Reminder Edited");
-                  //         }
-                  //         else {
-                  //             self.openToast("Reminder Not Found!");
-                  //         }
-                  //     });
-                  // }, function () {
-                  //     console.log('You cancelled the dialog.');
-                  // });
-                  //.then(function (reminder) {
-                  // Post request, and push onto users local list of reminders
-                  // this.$http.post('uri').then((response) => response.data)
-                  // after promise is succesful add to
-              /*    // reminder.assigne.reminders.push()
-                  _this.$http.post('/api/reminder/' + reminder._id, reminder).then(function successCallback(reminder) {
-                        //  self.selected.reminders.push(response.data);
-                      if (self.updateReminder(reminder.data)) {
-                          if (reminder.data.parent.id) {
+                  _this.$http.post('/api/note/update/' + note._id, note).then(function successCallback(note) {
+                      console.log('returned junk: ' + JSON.stringify(note.data._id));
+                      //  self.selected.reminders.push(response.data);
+                      if (self.updateNote(note.data)) {
+                          /*if (reminder.data.parent.id) {
                               var id = reminder.data.parent.id.slice(1, 25);
                               self.updateReminderInSurvey(id, reminder.data);
-                          }
-                          self.openToast("Reminder Edited");
+                          }*/
+                          self.openToast("Note Edited");
                       }
                       else {
-                          self.openToast("Reminder Not Found!");
+                          self.openToast("Note Not Found!");
                       }
                   });
-              }, function () {
-                  console.log('You cancelled the dialog.');
-              });
-              */
+                },function () {
+                    console.log('You cancelled the dialog.');
+                });
             };
+            MainController.prototype.updateNote = function(note){
+              console.log('Inside note');
+              console.log(userSelected.notes);
+              console.log(note);
+              for (var i = 0; i < userSelected.notes.length; i++) {
+                  if (note._id == userSelected.notes[i]._id) {
+                      userSelected.notes[i] = note;
+                      console.log(userSelected.notes);
+                      console.log('Look ma, an update!');
+
+                      return true;
+                  }
+              }
+              return false;
+
+
+
+            };
+
+
 
 
             MainController.prototype.clearNotes = function ($event) {
@@ -666,7 +856,7 @@ var app;
                     // this.$http.post('uri').then((response) => response.data)
                     // after promise is succesful add to
                     // reminder.assigne.reminders.push()
-                    console.log(survey);
+HI Shane!                    console.log(survey);
                     _this.$http.post('/api/survey', survey).then(function successCallback(survey) {
                         self.selected.surveys.push(survey.data);
                         console.log(survey.data);
@@ -787,9 +977,25 @@ var app;
                     .position('top right')
                     .hideDelay(5000));
             };
+
+
+
+            MainController.prototype.tester = function () {
+              console.log("hey im here");
+              this.$mdSidenav('left').toggle();
+            };
+
+
+
+
             MainController.prototype.toggleList = function () {
+                console.log("hey im here");
                 this.$mdSidenav('left').toggle();
             };
+
+
+
+
             MainController.prototype.selectUser = function (user) {
                 this.selected = user;
                 this.userService.selectedUser = this.selected;
@@ -800,16 +1006,7 @@ var app;
                 }
                 this.tabIndex = 0;
             };
-            MainController.prototype.hasReal = function (user) {
-              //  console.log(user);
-              //  console.log(user.slack);
-                if (user.slack.real_name) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            };
+
             MainController.prototype.isCoach = function (user) {
                 if (user.role == "coach") {
                     return true;

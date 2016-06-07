@@ -23,11 +23,11 @@ var passport = passport();
 
 
 
-// Use the Express application instance to listen to the '3000' port
+// Use the Express application instance to listen to the '8081' port
 app.listen(8081);
 
 // Log the server status to the console
-console.log('Server running at http://localhost:3000/');
+console.log('Server running at http://localhost:8081/');
 
 // Use the module.exports property to expose our Express application instance for external usage
 module.exports = app;

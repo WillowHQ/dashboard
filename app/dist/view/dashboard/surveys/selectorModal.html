@@ -1,0 +1,48 @@
+<md-dialog>
+  <md-content layout-padding>
+    <p>Select A Date</p>
+
+    <div layout = "row" >
+    <p>Repeat weekly</p>
+      <md-checkbox ng-model = "ctrl.repeat" layout-padding style="margin: 0 14px 0 14px">
+
+      </md-checkbox>
+    </div>
+
+
+    <div layout="row" layout-wrap="">
+      <md-input-container flex="grow" layout-fill style="margin: 0 14px 0 14px;">
+        <label>Enter in a time</label>
+        <input required ng-model="ctrl.time" type="time">
+      </md-input-container>
+
+    </div>
+
+
+
+    <div layout="row" style="margin: 0 16px 0 9px;">
+      <md-checkbox aria-label="Select All"
+                  ng-checked="ctrl.isChecked()"
+                  md-indeterminate="ctrl.isIndeterminate()"
+                  ng-click="ctrl.toggleAll()">
+       <span ng-if="ctrl.isChecked()">Un-</span>Select
+     </md-checkbox>
+
+    <md-checkbox ng-repeat="item in ctrl.days" ng-checked="ctrl.exists(item, ctrl.selectedDays)" ng-click="ctrl.toggle(item, ctrl.selectedDays)" >
+          {{item}}
+    </md-checkbox>
+
+    </div>
+    <div layout>
+      <md-button ng-click = "ctrl.cancel()">
+        Cancel
+      </md-button>
+      <md-button ng-click = "ctrl.save()">
+        Publish Survey
+      </md-button>
+    </div>
+
+
+
+  </md-content>
+</md-dialog>

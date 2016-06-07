@@ -14,7 +14,8 @@
     "angular-route": "^1.5.1",
     "angular-underscore": "^0.5.0",
     "moment": "^2.12.0",
-    "angular-touch": "^1.5.3"
+    "angular-touch": "^1.5.3",
+    "sc-date-time": "^1.1.6"
   },
   "resolutions": {
     "moment": "^2.12.0",

@@ -21,7 +21,7 @@ exports.create = function(req, res) {
   console.log(goals);
 
   _.forEach(goals, function(goal) {
-    request.post('http://localhost:3000/api/reminder', {
+    request.post('http://localhost:8081/api/reminder', {
       form: {
         title: goal.action,
         timeOfDay: goal.time,
@@ -108,7 +108,7 @@ exports.update = function(req, res) {
   console.log(req.body);
     // Update Referenced Reminders
   _.forEach(goals, function(goal) {
-    request.post('http://localhost:3000/api/reminder/' + goal.reminder._id, {
+    request.post('http://localhost:8081/api/reminder/' + goal.reminder._id, {
       form: goal.reminder
     }, function(err, response, reminder) {
       console.log(reminder);

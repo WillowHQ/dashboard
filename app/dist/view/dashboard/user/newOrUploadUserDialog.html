@@ -17,10 +17,16 @@
       <md-button ng-click="ctrl.cancel()" >
         Cancel
       </md-button>
-      <md-button type="submit" class="md-primary md-raised" ng-click="ctrl.add = true; ctrl.upload = false;">
+      <div ng-show="ctrl.hasFacebookId">
+        <md-button type="submit" class="md-primary md-raised" ng-click="ctrl.add = false; ctrl.upload = false; ctrl.fb = true;">
+          <ng-md-icon icon="facebook-box"></ng-md-icon>
+          Add Through Facebook
+        </md-button>
+      </div>
+      <md-button type="submit" class="md-primary md-raised" ng-click="ctrl.add = true; ctrl.upload = false; ctrl.fb = false;">
         New Client
       </md-button>
-      <md-button type="submit" class="md-primary md-raised" ng-click="ctrl.add = false; ctrl.upload = true;">
+      <md-button type="submit" class="md-primary md-raised" ng-click="ctrl.add = false; ctrl.upload = true; ctrl.fb = false;">
         Upload Existing Clients
       </md-button>
     </md-dialog-actions>

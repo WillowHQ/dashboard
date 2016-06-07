@@ -1,22 +1,36 @@
+
 <md-toolbar>
+
   <div class="md-toolbar-tools">
-    <md-button class="menu" hide-gt-sm ng-click="vm.toggleList()" aria-label="Show User List">
+    <md-button class="menu" ng-click="vm.tester()" aria-label="Show User List">
       <md-icon md-svg-icon="menu" ></md-icon>
+
     </md-button>
     <!-- Navbar Action/Menus-->
 
-    <md-headline flex-offset="10" style="color: white;">FitPath</md-headline>
+    <md-headline  style="color: white;">
+      <li><a flex-offset="10" href="/" >FitPath</a></li>
+    </md-headline>
 
-    <div class="nav-buttons" style="color: white;">
+    <div class="nav-buttons" style="color: white;" flex = "90">
       <ul>
+
         <li><a href="#!/"> Dashboard </a></li>
         <li><a href="#!/table"> Roster </a></li>
         <li><a href="#!/surveys"> Surveys </a></li>
+        <!--
         <li><a href="#!/feed"> Feed </a></li>
         <li><a href="#!/reminders"> Reminders </a></li>
         <li><a href="#!/workouts"> Workouts </a></li>
         <li><a href="#!/notes"> Notes </a></li>
+      -->
       </ul>
     </div>
+    <div>
+      <md-button>
+        <li><a href="/signout"> Sign out </a></li>
+      </md-button>
+    </div>
   </div>
+
 </md-toolbar>

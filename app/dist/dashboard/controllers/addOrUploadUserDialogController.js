@@ -8,7 +8,7 @@ var app;
         this.$mdDialog = $mdDialog;
         this.userService = userService;
         this.user = this.userService.get();
-        console.log(this.user);
+        this.hasFacebookId = this.user.facebookId;
 
         this.avatars = [
           'svg-1', 'svg-2', 'svg-3', 'svg-4'
@@ -18,8 +18,12 @@ var app;
         this.$mdDialog.cancel();
       };
       AddOrUploadUserDialogController.prototype.save = function () {
-        var add = this.add;
-        this.$mdDialog.hide(add);
+        var option = {
+          add: this.add,
+          upload: this.upload,
+          fb: this.fb
+        };
+        this.$mdDialog.hide(option);
       };
       AddOrUploadUserDialogController.prototype.add = function ($event) {
         console.log('You wish to add a new client');

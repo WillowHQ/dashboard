@@ -15,6 +15,7 @@ module.exports = function(app) {
   app.post('/api/reminderResponse/:id', reminder.addResponse);
   app.post('/api/reminderResponse/remove/:id', reminderResponse.delete);
 
+  app.post('/api/reminder/receive', reminder.receiveResponse);
 
   app.get('/api/reminder/response/list', reminderResponse.list);
   // When Reminder is initially sent out by the bot
@@ -22,5 +23,5 @@ module.exports = function(app) {
   // When there is a genuine response
   app.post('/api/reminder/response/respond/:id', reminderResponse.respond);
   app.post('/api/reminder/response/remove/:id', reminderResponse.delete);
-  
+
 }

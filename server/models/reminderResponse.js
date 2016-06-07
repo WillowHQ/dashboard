@@ -5,22 +5,19 @@ var Schema = mongoose.Schema;
 
 var reminderResponseSchema = new Schema({
 
-  response:[{
-    text: {type: String},
-    time: {type: Date}
-  }],
+  response: {type: String},
   createdBy:{type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   responded:{type:Boolean, default:'false'},
-  reminder:{type: mongoose.Schema.Types.ObjectId, ref: 'Reminder'},
   timeStamp: {type: Date, default: Date.now}
 });
 
+/*
 reminderResponseSchema.post('save', function(doc,next) {
   // Push blank response onto ref'd reminder
   mongoose.model('Reminder').findByIdAndUpdate(
     this.reminder,
     {
-      $push: {"responses":this._id}
+      $push: {"responses":this}
     },
     {new: true},
     function(err, reminder) {
@@ -48,7 +45,7 @@ reminderResponseSchema.post('save', function(doc,next) {
   );
   next();
 });
-
+*/
 
 // Update User with most recent response and update thier status
 reminderResponseSchema.post('findOneAndUpdate', function() {

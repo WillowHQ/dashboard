@@ -1,33 +1,53 @@
 
 
-<md-content>
+<md-content layout-fix>
 
 
   <md-button  class="md-fab" aria-label="Add" ng-click="vm.addReminder($event)" style = "right: 5px;">
     <ng-md-icon icon="add"></ng-md-icon>
   </md-button>
-  
-  <p  ng-if="!vm.selected.reminders.length">No reminders for {{vm.selected.slack.name}}, yet.</p>
 
-  <md-card ng-repeat="reminder in vm.selected.reminders | orderBy: '-date':true track by reminder._id" >
+  <p  ng-if="!vm.selected.reminders.length">No reminders for  {{vm.selected.firstName +" " + vm.selected.lastName}}, yet.</p>
 
-    <div layout="row">
-      <md-card-content flex="80">
+  <md-card md-whiteframe = "3" ng-repeat="reminder in vm.selected.reminders | orderBy: '-date':true track by reminder._id" >
+
+    <div layout="row" >
+
+      <md-card-content  flex="60"  >
         <div layout="row">
-          <md-card-content>
-            <h3 style="margin-top: px;">{{reminder.title}}</h3>
-            <p>{{reminder.date | date:'MM/dd/yyyy'}}</p>
+
+
+          <md-card-content layout-padding layout = "column" flex = "40" >
+            <h3> {{reminder.title}} </h3>
           </md-card-content>
-          <md-card-content>
-            <p>{{reminder.selectedDates}}</p>
-            <p>{{reminder.author}}</p>
-            <p>{{reminder.assignee}}</p>
-            <p>{{reminder.timeOfDay | date:'h:mma'}}</p>
-            <p>{{reminder.responses}}</p>
+
+          <md-card-content layout = "column"  flex = "60" layout-padding>
+            <div layout = "row">
+              <div ng-repeat = "day in reminder.selectedDates">
+                <p> {{day}} <br></p>
+              </div>
+            </div>
+
+            <p>Time of Day: {{reminder.timeOfDay | date:'h:mma'}}</p>
           </md-card-content>
+
         </div>
       </md-card-content>
-      <div layout="column">
+      <div layout = "column" style = "overflow: auto; height:200px" layout-padding flex = "30" layout-fix>
+          <md-list >
+            <md-subheader>
+              Responses
+            </md-subheader>
+            <md-list-item ng-repeat = "response in reminder.responses" >
+                <p> {{$index + 1}}{{". " + response.response}}</p>
+            </md-list-item>
+
+
+          </md-list>
+      </div>
+
+
+      <div layout="column" flex= "10" layout-padding>
         <md-card-actions flex="20" layout-align="end right">
           <md-button ng-click="vm.removeReminder($event, reminder)">Remove</md-button>
         </md-card-actions>
@@ -35,6 +55,8 @@
           <md-button ng-click="vm.editReminder($event,reminder)">Edit</md-button>
         </md-card-actions>
       </div>
+
     </div>
   </md-card>
+
 </md-content>

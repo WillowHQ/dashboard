@@ -1,8 +1,17 @@
-<md-dialog aria-label="Add User">
+<md-dialog aria-label="Add User" flex = "50">
   <form name="userForm" ng-submit="ctrl.save()">
 
     <md-dialog-content>
-      <div layout="column" layout-padding>
+      <div layout = "row" layout-padding>
+        <md-input-container class="md-block" flex-gt-sm>
+          <label>Username</label>
+          <input ng-model="ctrl.username" name="username" required>
+          <div ng-messages="userForm.username.$error">
+            <div ng-message="required">This is required.</div>
+          </div>
+        </md-input-container>
+      </div>
+      <div layout="row" layout-padding>
         <!-- <div layout-gt-sm="row"> -->
 
           <md-input-container class="md-block" flex-gt-sm>
@@ -15,18 +24,41 @@
 
           <md-input-container class="md-block" flex-gt-sm>
             <label>Last Name</label>
-            <input ng-model="ctrl.lastName" name="lastName" />
+            <input ng-model="ctrl.lastName" name="lastName" required>
+            <div ng-messages="userForm.lastName.$error">
+              <div ng-message="required">This is required.</div>
+            </div>
           </md-input-container>
 
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>Bio</label>
-            <input ng-model="ctrl.bio" name="bio" />
-          </md-input-container>
 
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>Username</label>
-            <input ng-model="ctrl.username" name="username" />
-          </md-input-container>
+      </div>
+      <div layout-padding>
+        <md-input-container class = "md-block" flex-gt-sm>
+          <label>Email</label>
+          <input ng-model="ctrl.email" name="email" required>
+          <div ng-messages="userForm.email.$error">
+            <div ng-message="required">This is required.</div>
+          </div>
+        </md-input-container>
+      </div>
+      <div layout = "row" layout-padding>
+
+        <md-input-container class="md-block" flex-gt-sm>
+          <label>Bio</label>
+          <input ng-model="ctrl.bio" name="bio" />
+        </md-input-container>
+
+        <md-input-container class="md-block" flex-gt-sm>
+          <label>Phone Number</label>
+          <input ng-model="ctrl.phoneNumber" name="phoneNumber">
+        </md-input-container>
+
+      </div>
+
+
+        <!--
+        <div>
+
 
           <md-input-container class="md-block" flex-gt-sm>
             <label>Password</label>
@@ -58,13 +90,10 @@
             <input ng-model="ctrl.slack.real_name" name="slack_real_name" />
           </md-input-container>
 
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>Phone Number</label>
-            <input ng-model="ctrl.phoneNumber" name="phoneNumber" />
-          </md-input-container>
 
+          -->
       <!--  </div> -->
-      </div>
+
     </md-dialog-content>
 
     <md-dialog-actions layout="row">

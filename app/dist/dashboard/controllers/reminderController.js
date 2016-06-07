@@ -25,6 +25,7 @@ var app;
                     this._id = selected._id,
                         this.selectedDays = selected.selectedDates,
                         this.reminder = selected.title,
+                        this.responses = selected.responses,
                         this.time = new Date(selected.timeOfDay);
                 }
             }
@@ -65,6 +66,8 @@ var app;
                 this.$mdDialog.cancel();
             };
             ReminderController.prototype.save = function () {
+                //console.log("r" + this.selected);
+                //console.log("hello select: " +this.selected.responses);
                 console.log(this.time);
                 var dates = {
                     monday: false,
@@ -122,7 +125,9 @@ var app;
                     selectedDates: this.selectedDays,
                     daysOfTheWeek: dates,
                     author: this.author,
-                    assignee: this.assignee
+                    assignee: this.assignee,
+                    responses: this.responses
+
                 };
 
                 console.log('check time');

@@ -4,7 +4,7 @@
   <md-button class="md-fab" aria-label="Add" ng-click="vm.addNote($event)" style = "right: 5px; ">
     <ng-md-icon  icon="add"></ng-md-icon>
   </md-button>
-  <p ng-if="!vm.selected.notes.length">No notes for {{vm.selected.slack.name}}, yet.</p>
+  <p ng-if="!vm.selected.notes.length">No notes for  {{vm.selected.firstName +" "+ vm.selected.lastName}}, yet.</p>
 
   <md-card ng-repeat="note in vm.selected.notes">
     <div layout="row">

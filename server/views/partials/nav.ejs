@@ -2,35 +2,37 @@
 <div class="nav-wrapper container">
   <a id="logo-container" href="#" class="brand-logo">FitPath</a>
   <ul class="right hide-on-med-and-down">
-    <% if ( email ) { %>
+    <% if ( userName || email) { %>
 
         <ul id="dropdown1" class="dropdown-content">
           <li><a href="/signout">Sign Out</a></li>
+          <!--
           <li><a href="/profile">Profile</a></li>
           <li><a href="/contact">Contact Us</a></li>
+        -->
         </ul>
 
         <li><a href="/dashboard#/">Dashboard</a></li>
-        <li><a href="/triangular#/">Triangular</a></li>
         <li><a class="dropdown-button" href="#!" data-activates="dropdown1">
           <%=email%>
         <i class="material-icons right">arrow_drop_down</i></a></li>
 
-    	<% } else { %>
-        <li><a href="/signin">Login</a></li>
-        <li><a href="/signup">Sign Up</a></li>
-        <li><a href="/contact">Contact Us</a></li>
 
+    	<% } else { %>
+        <li><a href="/signin">Sign In </a><li>
     <% } %>
+
+
+
   </ul>
+
+
   <ul id="nav-mobile" class="side-nav">
     <% if ( userFullName ) { %>
         <li><a href="/dashboard">Dashboard</a></li>
         <li><a href="/contact">Contact Us</a></li>
         <li><a href="/signout">Sign Out</a></li>
     	<% } else { %>
-        <li><a href="/signin">Login</a></li>
-        <li><a href="/signup">Sign Up</a></li>
         <li><a href="/contact">Contact Us</a></li>
     <% } %>
   </ul>

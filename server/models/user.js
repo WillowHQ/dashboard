@@ -11,7 +11,8 @@ var mongoose = require('mongoose'),
     reminder = require('./reminder.js'),
     note = require('./note.js'),
     message = require('./message.js'),
-    reminderResponse = require('./reminderResponse.js');
+    reminderResponse = require('./reminderResponse.js'),
+    surveyTemplate = require('./surveyTemplate.js');
 
 
 // Define a new 'UserSchema'
@@ -54,18 +55,23 @@ var UserSchema = new Schema({
     timezone: {type: String}
   },
   reminders: [
-    {type: mongoose.Schema.Types.ObjectId, ref: 'Reminder'}
+    {type: mongoose.Schema.Types.Object, ref: 'Reminder'}
   ],
   surveys: [
     {type: mongoose.Schema.Types.ObjectId, ref: 'Survey'}
   ],
-  imageUrl: {
+
+  surveyTemplates:[
+    {type: mongoose.Schema.Types.Object, ref: 'SurveyTemplate'}
+  ],
+
+  imgUrl: {
     type: String,
   },
   role:{
     type: String,
     enum: ['coach', 'user', 'admin'],
-    default: 'user'
+    default: 'coach'
   },
   status: {
     value: {
@@ -122,7 +128,11 @@ var UserSchema = new Schema({
 		default: Date.now
 	},
   phoneNumber: String,
-  facebookId: Number
+  facebookId: Number,
+  email: String,
+  pandoraSessionId: String,
+  // This is a hack for Pandorabots
+  pandoraBotSaid: String
 });
 
 // Set the 'fullname' virtual property

@@ -6,7 +6,7 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 var User = require('./user.js');
 var moment = require('moment');
 var ReminderResponse = require('./reminderResponse.js');
-
+var hooker = require('hooker');
 
 var reminderSchema = new Schema({
   title: {type: String, required: true},
@@ -34,9 +34,12 @@ var reminderSchema = new Schema({
     sunday: {type: Boolean}
   },
 
-  responses : [{
-    type: mongoose.Schema.Types.ObjectId, ref:'ReminderResponse'
-  }],
+  responses : [
+    {
+      response: {type: String},
+      createdBy: {type: mongoose.Schema.Types.ObjectId, ref:'User'}
+    }
+  ],
    // Who the reminder is coming from
   days: [{type: Number, min: 0, max: 6}],
   hour: {type: Number, min: 0, max: 23},
@@ -57,7 +60,9 @@ var reminderSchema = new Schema({
   // Who the reminder is going too
   assignee: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   // Who the reminder is coming from
-  author: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+  author: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+
+  needsResponse: {type: Boolean, default: false}
 });
 
 reminderSchema.virtual('mostRecentResponse').get(function() {
@@ -82,7 +87,7 @@ reminderSchema.method.response = function(){
 *  to increment their status point
 *  Returns Boolean Value
 */
-reminderSchema.methods.increment = function() {
+/*reminderSchema.methods.increment = function() {
 
   var currentResponse = this.responses[this.responses.length - 1];
   var lastResponse = this.lastGenuine();
@@ -107,7 +112,7 @@ reminderSchema.methods.increment = function() {
   }
 
 }
-
+*/
 // We want to decrement if the last response
 reminderSchema.methods.decrement = function() {
 
@@ -181,22 +186,25 @@ reminderSchema.methods.parseDates = function() {
 
 }
 
-reminderSchema.pre('save', function(next) {
+/*reminderSchema.pre('save', function(next) {
     this.parseDates();
     next();
-});
+});*/
 
 //make a virtual that returns the most recent response on the responses array
 
 
-//this doesn't work TODO
-
-reminderSchema.pre('update', function(next) {
-    this.parseDates();
-    next();
-});
 
 var Reminder = mongoose.model('Reminder', reminderSchema);
+
+hooker.hook(Reminder, 'update', {
+  pre: function () {
+    this.parseDates();
+  },
+  post: function () {
+
+  }
+});
 
 //lets make making reminders a piece of cake !
 

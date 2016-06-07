@@ -1,67 +1,128 @@
-<section flex  layout-padding  style = "background-color: blue">
+<section flex  layout-padding  style = >
 
   <md-content layout-padding="">
     <div>
-      <form name="userForm" ng-submit = "vm.createSurvey()">
+      <form  md-whiteframe = "3" name="questionForm" ng-submit = "vm.saveSurvey()">
 
-        <div layout-gt-sm="row" layout-padding >
-          <md-input-container  class="md-block" flex="50" >
+        <div  layout-padding layout-gt-sm="row"  >
+          <md-input-container layout-padding class="md-block" flex="50" >
             <label>Title of Survey</label>
-            <input ng-disabled = "!vm.first" ng-model = "vm.surveyTitle" required>
-            <div ng-messages="userForm.username.$error">
+            <input  ng-model = "vm.surveyTitle" required >
+            <div ng-messages="questionForm.$error">
               <div ng-message="required">This is required.</div>
             </div>
           </md-input-container>
+          <div  flex = "10" layout-padding>
+            <md-button   ng-click = "vm.anotherQuestion()" ng-if = "vm.questionAmount.length < 5" >
+              Another Question
+            </md-button>
+          </div>
         </div>
 
-        <md-content ng-if = "vm.first" layout-padding>
-          <div layout ="row">
+        <md-content  ng-repeat = "i in vm.questionAmount"  layout-padding>
+          <div layout ="row" >
 
-            <md-input-container layout-padding class "md-block" flex= "80">
-              <label>Question 1</label>
-              <input ng-model = "vm.questions[0].question" ng-required = "true">
-            </md-input-container>
 
-            <md-input-container layout-padding class "md-block" flex ="20">
-              <label>Question Header </label>
-              <input ng-model = "vm.questions[0].questionHeader" ng-required = "true">
-            </md-input-container>
+              <md-input-container  class = "md-block" flex = "40">
+                <label>Question {{i +1}}</label>
+                <input ng-model = "vm.questions[i].question" required>
+              </md-input-container>
+
+
+
+              <md-input-container  class = "md-block" flex = "20">
+                <label>Question {{i +1}} Header </label>
+                <input ng-model = "vm.questions[i].questionHeader" required>
+              </md-input-container>
+
+
+
+              <md-input-container class = "form-input-container padded-input md-block" flex = "10" >
+                <label>Answer Type</label>
+                <md-select  name = "type" ng-model = "vm.questions[i].type" required>
+                  <md-option ng-repeat = "index in vm.questions1" ng-value = "index.type"  >
+                    {{index.type}}
+                  </md-option>
+                </md-select>
+                <div class ="errors" ng-messages="questionForm.type.$error" ng-if = "questionForm.$dirty">
+                  <div ng-message="required">Required</div>
+                </div>
+              </md-input-container>
+
+
           </div>
-          <div>
-            <!-- fix only one at a time -->
-            <p>Selected Answer Type: </p>
-            <md-radio-group ng-model = "vm.questions[0].type">
-              <md-radio-button value = "1">
-                Yes or No
-              </md-radio-button>
-
-              <md-radio-button value = "2">
-                Scale from 1 to 5
-              </md-radio-button>
-
-              <md-radio-button value = "3">
-                Written Answer
-              </md-radio-button>
-            </md-radio-group>
-          </div>
-
         </md-content>
 
-        <md-content ng-if = "vm.second" layout-padding>
+        <div layout = "row" >
+          <md-button ng-click = "vm.cancelSurvey()">
+            Cancel
+          </md-button>
+
+          <md-button type= "submit" ng-disabled="questionForm.$invalid">
+            Save Survey
+          </md-button>
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!--
+
+        <p>Selected Answer Type: </p>
+        <md-radio-group ng-model = "vm.questions[0].type">
+          <md-radio-button value = "1" >
+            Yes or No
+          </md-radio-button>
+
+          <md-radio-button value = "2">
+            Scale from 1 to 5
+          </md-radio-button>
+
+          <md-radio-button value = "3">
+            Written Answer
+          </md-radio-button>
+        </md-radio-group>
+
+
+        <md-content ng-if = "vm.second" >
           <div layout ="row">
 
-            <md-input-container layout-padding class "md-block" flex= "80">
+            <md-input-container  class "md-block" flex= "80">
               <label>Question 2</label>
               <input ng-model = "vm.questions[1].question" ng-required = "true">
             </md-input-container>
 
-            <md-input-container layout-padding class "md-block" flex ="20">
+            <md-input-container  class "md-block" flex ="20">
               <label>Question Header </label>
               <input ng-model = "vm.questions[1].questionHeader" ng-required = "true">
             </md-input-container>
           </div>
           <div>
-            <!-- fix only one at a time -->
+
             <p>Selected Answer Type: </p>
             <md-radio-group ng-model = "vm.questions[1].type" ng-required = "true">
               <md-radio-button value = "1">
@@ -80,21 +141,21 @@
 
         </md-content>
 
-        <md-content ng-if = "vm.third" layout-padding>
+        <md-content ng-if = "vm.third">
           <div layout ="row">
 
-            <md-input-container layout-padding class "md-block" flex= "80">
+            <md-input-container  class "md-block" flex= "80">
               <label>Question 3</label>
               <input ng-model = "vm.questions[2].question" ng-required = "true">
             </md-input-container>
 
-            <md-input-container layout-padding class "md-block" flex ="20">
+            <md-input-container  class "md-block" flex ="20">
               <label>Question Header </label>
               <input ng-model = "vm.questions[2].questionHeader" ng-required = "true">
             </md-input-container>
           </div>
           <div>
-            <!-- fix only one at a time -->
+
             <p>Selected Answer Type: </p>
             <md-radio-group ng-model = "vm.questions[2].type" ng-required = "true">
               <md-radio-button value = "1">
@@ -113,21 +174,21 @@
 
         </md-content>
 
-        <md-content ng-if = "vm.fourth" layout-padding>
+        <md-content ng-if = "vm.fourth" >
           <div layout ="row">
 
-            <md-input-container layout-padding class "md-block" flex= "80">
+            <md-input-container class "md-block" flex= "80">
               <label>Question 4</label>
               <input ng-model = "vm.questions[3].question" ng-required = "true">
             </md-input-container>
 
-            <md-input-container layout-padding class "md-block" flex ="20">
+            <md-input-container  class "md-block" flex ="20">
               <label>Question Header </label>
               <input ng-model = "vm.questions[3].questionHeader" ng-required = "true">
             </md-input-container>
           </div>
           <div>
-            <!-- fix only one at a time -->
+
             <p>Selected Answer Type: </p>
             <md-radio-group ng-model = "vm.questions[3].type" ng-required = "true">
               <md-radio-button value = "1">
@@ -146,21 +207,22 @@
 
         </md-content>
 
-        <md-content ng-if = "vm.fifth" layout-padding>
+        <md-content ng-if = "vm.fifth" >
           <div layout ="row">
 
-            <md-input-container layout-padding class "md-block" flex= "80">
+            <md-input-container  class "md-block" flex= "60">
               <label>Question 5</label>
               <input ng-model = "vm.questions[4].question" ng-required = "true">
             </md-input-container>
 
-            <md-input-container layout-padding class "md-block" flex ="20">
+            <md-input-container class "md-block" flex ="20">
               <label>Question Header </label>
               <input ng-model = "vm.questions[4].questionHeader" ng-required = "true">
             </md-input-container>
+
           </div>
           <div>
-            <!-- fix only one at a time -->
+
             <p>Selected Answer Type: </p>
             <md-radio-group ng-model = "vm.questions[4].type" ng-required = "true">
               <md-radio-button value = "1">
@@ -178,25 +240,7 @@
           </div>
 
         </md-content>
-
-
-
-
-
-
-        <div layout = "row" layout-padding>
-          <md-button ng-click = "vm.surveyCancel()">
-            Cancel
-          </md-button>
-          <md-button ng-click = "vm.anotherQuestion()" ng-disabled = "vm.fifth">
-            Another Question
-          </md-button>
-          <md-button ng-submit = "vm.saveSurvey()">
-            Save
-          </md-button>
-
-        </div>
-
+        -->
 
       </form>
     </div>

@@ -5,9 +5,15 @@
   <script src="../../../bower_components/moment/moment.js"></script>
 
   <!-- For sending messages to clients -->
-  <script src="http://localhost:3001/socket.io/socket.io.js"></script>
+  <script src="http://localhost:3854/socket.io/socket.io.js"></script>
   <script>
-    var socket = io.connect('http://localhost:3001');
+    var messageSocket = io.connect('http://localhost:3854');
+  </script>
+
+  <!-- For sending responses to clients -->
+  <script src="http://localhost:3852/socket.io/socket.io.js"></script>
+  <script>
+    var responseSocket = io.connect('http://localhost:3852')
   </script>
 
   <!-- Bower / Front End Components -->
@@ -27,12 +33,12 @@
   <script src="../../../dist/dashboard/models.js"></script>
   <script src="../../../dist/dashboard/controllers/reminderController.js"></script>
   <script src="../../../dist/dashboard/controllers/userController.js"></script>
-
+<!--
   <script src="../../../dist/dashboard/controllers/surveyController.js"></script>
 
   <script src="../../../dist/dashboard/controllers/tableController.js"></script>
-
-  <script src="../../../dist/dashboard/controllers/surveyBuilderController.js"></script>
+-->
+  <script src="../../../dist/dashboard/controllers/surveySelectorController.js"></script>
   <script src="../../../dist/dashboard/controllers/noteController.js"></script>
   <script src="../../../dist/dashboard/controllers/messageController.js"></script>
   <script src="../../../dist/dashboard/controllers/addBioDialogController.js"></script>

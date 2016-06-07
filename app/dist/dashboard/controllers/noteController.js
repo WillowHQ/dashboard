@@ -11,6 +11,7 @@ var app;
                 this.assignee = this.userService.selectedUser;
                 if(selected){
                   this._id = selected._id;
+                  this.note = selected.body;
                 }
 
 

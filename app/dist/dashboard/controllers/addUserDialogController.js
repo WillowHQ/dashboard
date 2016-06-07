@@ -12,7 +12,7 @@ var app;
 
                 //creator: any = this.userService.get();
                 this.avatars = [
-                    'ashley.png', 'james.png', 'jenn.png', 'jo.png', 'john.png', 'julie.png', 'mamajess.png', 'sharon.png'
+                  "matt.png", "thom.png", "tiffany.png", "victoria.png"
                 ];
             }
             AddUserDialogController.prototype.cancel = function () {
@@ -42,6 +42,8 @@ var app;
                   bio: this.bio,
                   username: this.username,
                   password: this.password,
+                  email: this.email,
+                  /*
                   slack_id: this.slack_id,
                   slack: {
                     email: this.slack.email,
@@ -49,8 +51,11 @@ var app;
                     name: this.slack.real_name,
                     img: '/assets/img/' + this.avatars[Math.floor(Math.random() * 7)]
                   },
+                  */
                   coaches: [this.user._id],
-                  imgUrl: '/assets/img/' + this.avatars[Math.floor(Math.random() * 7)],
+                  role: "user",
+
+                  imgUrl: '/assets/img/' + this.avatars[Math.floor(Math.random() * 3)],
                   phoneNumber: this.phoneNumber
                 }
                 console.log(user);

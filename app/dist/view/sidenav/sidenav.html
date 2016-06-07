@@ -1,12 +1,16 @@
 <md-sidenav class="md-sidenav-left md-whiteframe-z2"
               md-component-id="left"
-              md-is-locked-open="$mdMedia('gt-sm')" flex>
+              md-is-open = "true"
+              md-is-locked-open="$mdMedia('gt-xs')" style="width: 90%">
+
   <div layout-padding>
     <md-autocomplete
+      md-icon = "search"
       md-search-text="vm.searchText"
       md-items="item in vm.users | filter:vm.searchText"
       md-item-text="item.name"
       md-min-length="3"
+      style="width: 90%"
       placeholder="filter">
       <md-item-template>
         <span md-highlight-text="vm.searchText" md-highlight-flags="^i">{{item.name}}</span>
@@ -22,22 +26,21 @@
         <md-button ng-click="vm.selectUser(vm.user)">
           <i class="material-icons avatar" style="color: #444;">face</i>
               <span>
-                {{vm.user.username}}
+                {{vm.user.username }}
               </span>
 
 
         </md-button>
+         <md-divider></md-divider>
       </md-list-item>
       <md-list-item ng-repeat="it in vm.clients | filter:vm.searchText | orderBy:'name'">
-          <md-button ng-click="vm.selectUser(it)" ng-class="{'selected' : it === vm.selected }">
-            <img ng-src="{{it.slack.img}}" class="avatar">
-              <span ng-show="vm.hasReal(it)">
-                {{it.slack.real_name}}
-              </span>
-              <span ng-show="!vm.hasReal(it)">
-                {{it.slack.name}}
-              </span>
+          <md-button ng-click="vm.selectUser(it)" ng-class="{'selected' : it === vm.selected }" >
+            <img ng-src="{{it.imgUrl}}" class="avatar">
+
+                {{it.firstName + " " + it.lastName}}
+
           </md-button>
+           <md-divider></md-divider>
       </md-list-item>
     </md-list>
   </md-content>

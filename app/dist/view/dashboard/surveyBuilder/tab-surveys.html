@@ -2,7 +2,7 @@
   <md-button class="md-fab" aria-label="Add" ng-click="vm.buildSurvey($event)" style = "right: 5px; ">
     <ng-md-icon  icon="add"></ng-md-icon>
   </md-button>
-  <p ng-if="!vm.selected.surveys.length">No Surveys for {{vm.selected.slack.name}}, yet.</p>
+  <p ng-if="!vm.selected.surveys.length">No Surveys for  {{vm.selected.firstName +" " + vm.selected.lastName}}, yet.</p>
 
   <md-card ng-repeat="survey in vm.selected.surveys | orderBy: '-date':true">
     <md-card-header ng-style="{'background-color': survey.status}">

@@ -1,0 +1,75 @@
+<section >
+  <div md-whiteframe = "3">
+    <h1>Select a survey to send out:</h1>
+
+    <md-input-container>
+
+      <md-select ng-model = "vm.selectedSurvey" >
+        <label> Surveys</label>
+        <md-option ng-repeat = "st in vm.user.surveyTemplates" ng-value = "st">
+          {{st.title}}
+        </md-option>
+      </md-select>
+
+    </md-input-container>
+
+    <md-content md-whiteframe = "3" layout-padding >
+      <md-card  layout-padding ng-if ="vm.selectedSurvey">
+
+        <div layout = "row">
+          <h1>{{vm.selectedSurvey.title}}</h1>
+          <md-button ng-click = "vm.previewSurvey(vm.selectedSurvey)"  layout-padding>
+            Preview Survey
+          </md-button>
+          <md-select  ng-model = "vm.userSurvey"  aria-label = "user" placeholder = "Select Users">
+
+            <md-checkbox aria-label="Select All"
+                           ng-checked="vm.isChecked()"
+                           md-indeterminate="vm.isIndeterminate()"
+                           ng-click="vm.toggleAll()">
+                <span ng-if="vm.isChecked()">Un-</span>Select All
+            </md-checkbox>
+            <md-list class="demo-select-all-checkboxes"  ng-value = "c" >
+              <md-checkbox layout = "row"  ng-repeat = "c in vm.user.clients" ng-checked = "vm.exists(c, vm.selectSurveyUser) " ng-click = "vm.toggle(c, vm.selectSurveyUser)">
+                  {{c.firstName  + " " + c.lastName}}
+              </md-checkbox>
+
+            </md-list>
+          </md-select>
+          <!-- disable when no user is enter -->
+          <md-button ng-click = "vm.sendOutSurvey()">
+            Pick Date and Send Survey
+          </md-button>
+
+        </div>
+        <div layout = "row">
+          <div ng-repeat = "u in vm.selectSurveyUser">
+            <p> {{u.firstName + " " + u.lastName + ","}} <br><p>
+          </div>
+        </div>
+      </md-card>
+    </md-content>
+
+
+
+
+
+
+</section>
+
+<!--
+<md-input-container layout-padding flex = "10">
+  <md-select ng-model = "vm.surveyUser">
+    <md-option ng-repeat = "client in vm.user.clients" ng-value = "client.firstName">{{client.firstName}} <md-option>
+  </md-select>
+</md-input-container>
+
+
+<md-content md-whiteframe = "3" layout-padding>
+  <md-card ng-if ="vm.selectedSurvey">
+    <h1>{{vm.selectedSurvey.title}}</h1>
+    <p ng-repeat = "q in vm.selectedSurvey.questions"> Question: {{q.question}}  QuestionHeader: {{q.questionHeader}}  Answer Type: {{q.type}}</p>
+
+  </md-card>
+</md-content>
+-->

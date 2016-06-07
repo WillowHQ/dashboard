@@ -29,11 +29,11 @@
               <div class="row">
                 <div id="first-name" class="col s6">
                   <label class="left-align login-label" for="first">FIRST NAME</label>
-                  <input id="first" type="text" name="firstName" class="validate" placeholder="Optional..">
+                  <input id="first" type="text" name="firstName" class="validate" >
                 </div>
                 <div id="last-name" class="col s6">
                   <label class="left-align login-label" for="last">LAST NAME</label>
-                  <input id="last" type="text" name="lastName" class="validate"  placeholder="Optional..">
+                  <input id="last" type="text" name="lastName" class="validate"  >
                 </div>
               </div>
 
@@ -51,6 +51,18 @@
                   <input id="password" type="password" name="password" class="validate">
                 </div>
               </div>
+
+              <div class="row">
+                <div class="col s12" id="login-input-container">
+                  <label class="left-align login-label" for="betacode">BETA CODE</label>
+
+                  <input id="email" type="email" name="username" class="validate">
+                  <!-- <label class="right-align login-label">Forgot your password?</label>
+                  <input id="password" type="password" name="betacode" class="validate">
+                -->
+                </div>
+              </div>
+
               <div class="row" id="login">
                 <div>
                   <button id="full-width" class="btn waves-effect waves-light fitpath-green" type="submit">Sign Up!
@@ -63,20 +75,9 @@
               or sign up through..
             </div>
 
-            <div class="row">
-              <div class="col s6 " style="padding-left: 20px;">
-                <a href="/oauth/google" class="btn waves-effect waves-light google-orange" type="submit" name="action" id="google-button">Google
-                 <i class="valign fa fa-google left"></i>
-                </a>
-              </div>
-              <div class="col s6" style="padding-right: 20px;">
-                <a href="/oauth/twitter" class="btn waves-effect waves-light twitter-blue" type="submit" name="action" id="twitter-button">Twitter
-                 <i class="valign fa fa-twitter left"></i>
-                </a>
-              </div>
-            </div>
 
-            <div class="row" id="login">
+
+            <div class="row" id="login" style="padding-left: 15px; padding-right: 15px; margin: 0px">
               <div>
                 <a href="/oauth/facebook" id="facebook-button" class="btn waves-effect waves-light facebook-blue" type="submit" name="action" id="login-left">Facebook
                    <i class="valign fa fa-facebook left"></i>
