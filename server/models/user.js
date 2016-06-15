@@ -4,6 +4,7 @@
 
 // Load the module dependencies
 var mongoose = require('mongoose'),
+    uniqueValidator = require('mongoose-unique-validator');
   	crypto = require('crypto'),
   	Schema = mongoose.Schema,
     Slack = require('./slack.js'),
@@ -141,7 +142,7 @@ var UserSchema = new Schema({
 		// Create a default 'created' value
 		default: Date.now
 	},
-  phoneNumber: String,
+  phoneNumber: {type: String, unique: true},
   facebookId: Number,
   email: String,
   pandoraSessionId: String,
@@ -149,6 +150,8 @@ var UserSchema = new Schema({
   pandoraBotSaid: String,
   betaCode: String
 });
+
+UserSchema.plugin(uniqueValidator);
 
 // Set the 'fullname' virtual property
 // UserSchema.virtual('fullName').get(function() {
