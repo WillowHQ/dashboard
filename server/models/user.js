@@ -4,7 +4,7 @@
 
 // Load the module dependencies
 var mongoose = require('mongoose'),
-    uniqueValidator = require('mongoose-unique-validator');
+    uniqueValidator = require('mongoose-unique-validator'),
   	crypto = require('crypto'),
   	Schema = mongoose.Schema,
     Slack = require('./slack.js'),
@@ -65,6 +65,9 @@ var UserSchema = new Schema({
   surveyTemplates:[
     {type: mongoose.Schema.Types.Object, ref: 'SurveyTemplate'}
   ],
+
+  mostRecentSurvey: {type: mongoose.Schema.Types.Object, ref: 'SurveyTemplate'},
+  mostRecentReminder: {type: mongoose.Schema.Types.Object, ref: 'Reminder'},
 
   imgUrl: {
     type: String,
@@ -252,6 +255,40 @@ UserSchema.statics.findByPhoneNumber = function (phoneNumber, callback) {
   console.log("Inside findByPhoneNumber, attempting to find: " + phoneNumber);
   return this.findOne({ 'phoneNumber': phoneNumber }, callback);
 }
+
+// Used to find the mostRecentSurvey and store it in the user object
+UserSchema.method.findMostRecentSurvey = function () {
+  // Surveys are stored in the coach, so retrieve the user's coach
+  User.findById(this.coaches[0], function (err, coach) {
+    if (!err) {
+      // Surveys are pushed onto the array from the end, so the most recent is at the end of the array
+      var length = coach.surveyTemplates.length;
+      var mostRecentSurvey = coach.surveyTemplates[length - 1];
+      this.mostRecentSurvey = mostRecentSurvey;
+      // Persists the mostRecentSurvey to the db
+      this.save();
+      return mostRecentSurvey;
+    } else {
+      console.log('An error occurred:');
+      console.log(err);
+    }
+  });
+}
+
+// Used to find mostRecentReminder and store it in the user object
+UserSchema.methods.findMostRecentReminder = function () {
+  // Reminders are stored in the user
+  var reminders = this.reminders;
+  // Reminders are pushed onto the array from the end, so the most recent is at the end of the array
+  var length =  reminders.length;
+  var mostRecentReminder = reminders[length - 1];
+  this.mostRecentReminder = mostRecentReminder;
+  // Persists the mostRecentReminder to the db
+  this.save();
+  return mostRecentReminder;
+}
+
+// Used to find the mostRecentReminder and store it in the user object
 
 // Find possible not used username
 // UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
