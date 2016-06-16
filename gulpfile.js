@@ -15,6 +15,8 @@ var SurveyTemplate = require('./server/models/surveyTemplate.js');
 var Message = require('./server/models/message.js');
 var Reminder = require('./server/models/reminder.js');
 var portfinder = require('portfinder');
+var ngrok = require('ngrok');
+var request = require('request');
 
 var botOptions = {
   url: 'https://aiaas.pandorabots.com',
@@ -33,7 +35,23 @@ var paths = {
   server: ['server/**/*.js']
 }
 
-gulp.task('sass', function () {
+gulp.task('ngrok', function () {
+  // TODO: break app port out to config file
+  ngrok.connect(12557, function (err, url) {
+    console.log('ngrok URL is: ' + url);
+    var body = {
+      url: url
+    };
+    console.log(JSON.stringify(body));
+    request.post({url: 'https://secret-mesa-17036.herokuapp.com/urls', json: body}, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log('Successfully added ngrok URL to router');
+      }
+    });
+  });
+});
+
+gulp.task('sass', ['ngrok'], function () {
   return gulp.src('app/dist/triangular/**/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest('app/dist/triangular/assets/css'));

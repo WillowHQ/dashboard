@@ -44,6 +44,7 @@
     "mongoose-deep-populate": "^3.0.0",
     "mongoose-unique-validator": "^1.0.2",
     "morgan": "^1.7.0",
+    "ngrok": "^2.2.1",
     "node-schedule": "^1.1.0",
     "nodemailer": "^2.3.0",
     "nodemailer-smtp-transport": "^2.4.1",
