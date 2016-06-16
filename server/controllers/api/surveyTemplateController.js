@@ -1,4 +1,65 @@
-'use strict'
+'use strict';
+
+var mongoose = require('mongoose');
+var SurveyTemplate = require('../../models/surveyTemplate.js');
+
+exports.create = function (req, res) {
+  var surveyTemplate = new SurveyTemplate(req.body);
+
+  surveyTemplate.save(function (err, surveyTemplate) {
+    if (!err) {
+      res.json(surveyTemplate);
+    } else {
+      res.send(err);
+    }
+  })
+};
+
+exports.read = function (req, res) {
+  SurveyTemplate.findById(req.params.template_id, function (err, surveyTemplate) {
+    if (!err) {
+      res.json(surveyTemplate);
+    } else {
+      res.send(err);
+    }
+  });
+};
+
+exports.update = function (req, res) {
+  SurveyTemplate.findByIdAndUpdate(
+    req.params.template_id,
+    req.body,
+    {new: true},
+    function (err, surveyTemplate) {
+      if (!err) {
+        res.json(surveyTemplate);
+      } else {
+        res.send(err);
+      }
+  })
+};
+
+exports.delete = function (req, res) {
+  SurveyTemplate.findByIdAndRemove(req.params.template_id, function (err, surveyTemplate) {
+    if (!err) {
+      res.json(surveyTemplate);
+    } else {
+      res.send(err);
+    }
+  });
+};
+
+exports.listAll = function (req, res) {
+  SurveyTemplate.find(function (err, surveyTemplate) {
+    if (!err) {
+      res.json(surveyTemplate);
+    } else {
+      res.send(err);
+    }
+  });
+};
+
+/*
 var mongoose = require('mongoose');
 var SurveyTemplate = require('../../models/surveyTemplate.js');
 var SurveyQuestion = require('../../models/surveyQuestion.js');
@@ -37,7 +98,7 @@ exports.create = function(req, res) {
   User.find({}, function (err, users) {
     _.each(users, function (user) {
       var xml = builder.create('aiml').att('version', '2.0');
-      /*// Defines pattern used internally to get answers to questions
+      /// Defines pattern used internally to get answers to questions
       xml.ele('category')
         .ele('pattern', 'XGET *')
         .up()
@@ -50,7 +111,7 @@ exports.create = function(req, res) {
         .ele('pattern', 'XNORM *')
         .up()
         .ele('template')
-          .ele('star');*/
+          .ele('star');/
         // Defines pattern to begin this survey
       console.log();
       console.log();
@@ -85,7 +146,7 @@ exports.create = function(req, res) {
         var total = surveyTemplate.questions.length - 1; //Object.keys(surveyTemplate.questions).length - 1;
         var count = 0;
         var xmlString = '';
-        for (var key = 0; key < surveyTemplate.questions.length; key++)/*in surveyTemplate.questions)*/ {
+        for (var key = 0; key < surveyTemplate.questions.length; key++)/*in surveyTemplate.questions)/ {
           (function (question, key) {
             console.log();
             console.log();
@@ -257,7 +318,7 @@ exports.sendSurveys = function () {
   console.log('Listing all bots...');
   bot.list(function (err, res) {
     if (!err) console.log(res);
-  });*/
+  });/
 
   SurveyTemplate.find({days: dayNow})
     .where('hour').equals(hoursNow)
@@ -390,7 +451,7 @@ exports.sendSurveys = function () {
         if (!err) console.log(res);
       });
     }
-  });*/
+  });/
 }
 
 // Every minute all day every day
@@ -399,3 +460,4 @@ rule.dayOfWeek = [new schedule.Range(0, 6)];
 var job = schedule.scheduleJob(rule, function() {
   exports.sendSurveys();
 });
+*/

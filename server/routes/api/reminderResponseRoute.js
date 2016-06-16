@@ -1,4 +1,4 @@
- 'use strict';
+/*'use strict';
 
 var reminderResponse = require('../../controllers/api/reminderResponseController.js');
 var reminder = require('../../controllers/api/reminderController.js');
@@ -25,3 +25,4 @@ module.exports = function(app) {
   app.post('/api/reminder/response/remove/:id', reminderResponse.delete);
 
 }
+*/

@@ -103,7 +103,7 @@ var app;
                 };
                 console.log(surveyTemplate);
 
-                _this.$http.post('/api/surveyTemplate/create', surveyTemplate).then(function successCallback(response) {
+                _this.$http.post('/api/surveytemplates/', surveyTemplate).then(function successCallback(response) {
                 console.log(response.data);
                 console.log(this.user);
                 this.user.surveyTemplates.push(response.data);

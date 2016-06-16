@@ -1,4 +1,4 @@
-'use strict'
+/*'use strict'
 
 var mongoose = require('mongoose');
 var Reminder = require('../../models/reminder.js');
@@ -101,7 +101,7 @@ exports.create = function(req, res) {
           console.log(responseData.from);
           console.log(responseData.body);
         }
-      });*/
+      });/
 
       res.send(reminder);
     }
@@ -119,7 +119,7 @@ exports.receiveSMS = function (req, res) {
   console.log(JSON.stringify(req.body));
   /*Reminder.findByIdAndUpdate(
     req.body.
-  )*/
+  )/
   res.end(resp.toString());
 }
 //fire a console log statement if we recieve a response
@@ -269,7 +269,7 @@ exports.update = function(req, res) {
       }
     }
     console.log(JSON.stringify(user));
-  });*/
+  });/
   //res.send(req.body);
 }
 
@@ -503,7 +503,7 @@ exports.receiveResponse = function (req, res) {
                                         console.log(err);
                                       }
                                     });
-                                  });*/
+                                  });/
                                   console.log();
                                 } else {
                                   console.log(err);
@@ -533,7 +533,7 @@ exports.receiveResponse = function (req, res) {
                             console.log('Error:');
                             console.log(err);
                           }
-                      });*/
+                      });/
                       console.log();
                       // trim the survey id from the response and send response to user
                       var trimmedResponse = response.responses.join(' ').replace(' ' + survey._id + user._id, '');
@@ -749,7 +749,7 @@ exports.receiveResponse = function (req, res) {
                                   console.log();
                                 }
                               });
-                            });*/
+                            });/
                             console.log();
                           } else {
                             console.log(err);
@@ -778,7 +778,7 @@ exports.receiveResponse = function (req, res) {
                       console.log('Error:');
                       console.log(err);
                     }
-                });*/
+                });/
                 console.log();
                 // trim the survey id from the response and send response to user
                 var trimmedResponse = response.responses.join(' ').replace(' ' + survey._id + user._id, '');
@@ -871,3 +871,4 @@ var job = schedule.scheduleJob(rule, function() {
 });
 
 //need a method to find all the reminders that need to go out
+*/

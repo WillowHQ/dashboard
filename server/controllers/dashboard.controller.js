@@ -1,8 +1,8 @@
 'use strict'
 
 var User 		 = require('mongoose').model('User'),
-    Reminder = require('mongoose').model('Reminder'),
-    ReminderResponse = require('mongoose').model('ReminderResponse'),
+    //Reminder = require('mongoose').model('Reminder'),
+    //ReminderResponse = require('mongoose').model('ReminderResponse'),
     path     = require('path'),
 		passport = require('passport');
 

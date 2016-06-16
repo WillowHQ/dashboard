@@ -2,9 +2,67 @@
 
 var mongoose = require('mongoose');
 var Survey = require('../../models/survey.js');
-var _ = require('underscore');
+
+exports.create = function (req, res) {
+  var survey = new Survey(req.body);
+
+  survey.save(function (err, survey) {
+    if (!err) {
+      res.json(survey);
+    } else {
+      res.send(err);
+    }
+  });
+};
+
+exports.read = function (req, res) {
+  Survey.findById(req.params.survey_id, function (err, survey) {
+    if (!err) {
+      res.json(survey);
+    } else {
+      res.send(err);
+    }
+  });
+};
+
+exports.update = function (req, res) {
+  Survey.findByIdAndUpdate(
+    req.params.survey_id,
+    req.body,
+    {new: true},
+    function (err, survey) {
+      if (!err) {
+        res.json(survey);
+      } else {
+        res.send(err);
+      }
+  });
+};
+
+exports.delete = function (req, res) {
+  Survey.findByIdAndRemove(req.params.survey_id, function (err, survey) {
+    if (!err) {
+      res.json(survey);
+    } else {
+      res.send(err);
+    }
+  });
+};
+
+exports.listAll = function (req, res) {
+  Survey.find(function (err, survey) {
+    if (!err) {
+      res.json(survey);
+    } else {
+      res.send(err);
+    }
+  });
+};
+
+/*var _ = require('underscore');
 var request = require('request');
 var User = require('../../models/user.js');
+/
 
 exports.create = function(req, res) {
 
@@ -154,3 +212,4 @@ exports.list = function(req, res) {
     res.json(obj);
   })
 }
+*/
