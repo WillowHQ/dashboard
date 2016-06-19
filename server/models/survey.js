@@ -2,12 +2,13 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var SurveyTemplateSchema = require('./surveyTemplate.js');
+var surveyQuestionSchema = require('./surveyQuestion.js').surveyQuestionSchema;
 
 var surveySchema = new Schema({
   author: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
   selectedUsers: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
-  body: {type: mongoose.Schema.Types.ObjectId, ref: 'SurveyTemplate', required: true},
+  title: {type: String, required: true},
+  questions: [surveyQuestionSchema],
   daysOfTheWeek: {
     monday: {type: Boolean, default: false},
     tuesday: {type: Boolean, default: false},
@@ -20,18 +21,26 @@ var surveySchema = new Schema({
   repeat: {type: Boolean, default: false},
   timeOfDay: {type: Date, default: Date.now},
   days: [{type: Number, min: 0, max: 6}],
-  hours: {type: Number, min: 0, max: 23},
+  hour: {type: Number, min: 0, max: 23},
   minute: {type: Number, min: 0, max: 59}
 });
 
 // A survey is a reminder if it contains only one question
 surveySchema.methods.isReminder = function () {
-  return this.content.questions.length === 1;
+  return this.questions.length === 1;
 };
+
+// Makes sure that the questions array contains at least one element
+surveySchema.path('questions').validate(function (questions) {
+  return questions.length >= 1;
+},'Path `{PATH}` must contain at least one element');
 
 var Survey = mongoose.model('Survey', surveySchema);
 
-module.exports = Survey;
+module.exports = {
+  Survey: Survey,
+  surveySchema: surveySchema
+};
 
 /*  assignee: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
 start: { type: Date, default: Date.now },

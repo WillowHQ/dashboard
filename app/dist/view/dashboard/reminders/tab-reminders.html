@@ -38,7 +38,7 @@
             <md-subheader>
               Responses
             </md-subheader>
-            <md-list-item ng-repeat = "response in reminder.responses" >
+            <md-list-item ng-repeat = "response in reminder.questions[0].responses" >
                 <p> {{$index + 1}}{{". " + response.response}}</p>
             </md-list-item>
 

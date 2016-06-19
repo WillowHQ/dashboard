@@ -13,7 +13,7 @@ var mongoose = require('mongoose'),
     note = require('./note.js'),
     message = require('./message.js'),
     reminderResponse = require('./reminderResponse.js'),
-    surveyTemplate = require('./surveyTemplate.js');
+    surveySchema = require('./survey.js').surveySchema;
 
 
 // Define a new 'UserSchema'
@@ -59,14 +59,9 @@ var UserSchema = new Schema({
     {type: mongoose.Schema.Types.Object, ref: 'Reminder'}
   ],
   surveys: [
-    {type: mongoose.Schema.Types.ObjectId, ref: 'Survey'}
+    surveySchema
   ],
 
-  surveyTemplates:[
-    {type: mongoose.Schema.Types.Object, ref: 'SurveyTemplate'}
-  ],
-
-  mostRecentSurvey: {type: mongoose.Schema.Types.Object, ref: 'SurveyTemplate'},
   mostRecentReminder: {type: mongoose.Schema.Types.Object, ref: 'Reminder'},
 
   imgUrl: {
@@ -256,7 +251,7 @@ UserSchema.statics.findByPhoneNumber = function (phoneNumber, callback) {
   return this.findOne({ 'phoneNumber': phoneNumber }, callback);
 }
 
-// Used to find the mostRecentSurvey and store it in the user object
+/*// Used to find the mostRecentSurvey and store it in the user object
 UserSchema.method.findMostRecentSurvey = function () {
   // Surveys are stored in the coach, so retrieve the user's coach
   User.findById(this.coaches[0], function (err, coach) {
@@ -274,7 +269,7 @@ UserSchema.method.findMostRecentSurvey = function () {
     }
   });
 }
-
+*/
 // Used to find mostRecentReminder and store it in the user object
 UserSchema.methods.findMostRecentReminder = function () {
   // Reminders are stored in the user

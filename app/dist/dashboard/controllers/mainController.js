@@ -56,7 +56,14 @@ var app;
                 else if (this.user.role == "coach") {
                     this.clients = this.user.clients;
                     self.selected = this.clients[0];
-
+                    if (typeof self.selected !== 'undefined') {
+                      for (var i = 0; i < self.selected.surveys.length; i++) {
+                        // A survey is a reminder if it has only one question
+                        if (self.selected.surveys[i].questions.length == 1) {
+                          self.selected.reminders.push(self.selected.surveys[i]);
+                        }
+                      }
+                    }
                 }
                 self.userService.selectedUser = self.selected;
                 userSelected = self.userService.selectedUser;
@@ -520,14 +527,21 @@ var app;
                     }
                 }).then(function (reminder) {
                     console.log(reminder);
+                    reminder.questions = {
+                      header: reminder.title,
+                      type: 'YESNO',
+                      question: reminder.title
+                    };
+                    reminder.repeat = true;
                     // Post request, and push onto users local list of reminders
                     // this.$http.post('uri').then((response) => response.data)
                     // after promise is succesful add to
                     // reminder.assigne.reminders.push()
 
-                    _this.$http.post('/api/reminder/create', reminder).then(function successCallback(response) {
-                        self.selected.reminders.push(response.data);
-                        console.log(response.data);
+                    _this.$http.post('/api/users/' + self.selected.id + '/surveys/', reminder).then(function successCallback(response) {
+                        // Push the user's newest survey into the reminders array for front-end display
+                        self.selected.reminders.push(response.data.surveys[response.data.surveys.length - 1]);
+                        console.log(JSON.stringify(response.data.surveys[response.data.surveys.length - 1]));
                     });
 
                     self.openToast("Reminder added");
@@ -590,17 +604,17 @@ var app;
                         selected: reminder
                     }
                 }).then(function (reminder) {
-                    console.log(reminder.responses);
+                    console.log(reminder);
                     console.log(userSelected);
 
-                    // Post request, and push onto users local list of reminders
+                    // Put request, and push onto users local list of reminders
                     // this.$http.post('uri').then((response) => response.data)
                     // after promise is succesful add to
                     // reminder.assigne.reminders.push()
-                    _this.$http.post('/api/reminder/update/' + reminder._id, reminder).then(function successCallback(reminder) {
+                    _this.$http.put('/api/users/' + self.selected._id + '/surveys/' +  reminder._id, reminder).then(function successCallback(reminder) {
                         console.log('returned junk: ' + JSON.stringify(reminder.data));
                         //  self.selected.reminders.push(response.data);
-                        if (self.updateReminder(reminder.data)) {
+                        if (self.updateReminder(reminder.data.surveys[reminder.data.surveys.length - 1])) {
                             /*if (reminder.data.parent.id) {
                                 var id = reminder.data.parent.id.slice(1, 25);
                                 self.updateReminderInSurvey(id, reminder.data);
@@ -628,7 +642,7 @@ var app;
                     console.log(reminder);
                     if (result) {
                         console.log('removing reminder id: ' + reminder._id);
-                        _this.$http.post('/api/reminder/remove/' + reminder._id, reminder)
+                        _this.$http.delete('/api/users/' + self.selected._id + '/surveys/' + reminder._id, reminder)
                             .then(function successCallback(success) {
                             if (success) {
                                 console.log(success);
@@ -779,10 +793,10 @@ var app;
             };
 
             // socket.io code ahead
-            responseSocket.on('response', function (response) {
+            /*responseSocket.on('response', function (response) {
               console.log('Server sent a reminder response');
               MainController.prototype.updateReminder(response);
-            });
+            });*/
 
             surveySocket.on('survey', function (response) {
               console.log('Server sent a survey response');

@@ -1,23 +1,25 @@
-'use strict';
+/*'use strict';
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var surveyQuestionSchema = require('./surveyQuestion.js').surveyQuestionSchema;
 
 var surveyTemplateSchema =  new Schema({
   title: {type: String, required: true},
-  questions: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: 'SurveyQuestion',
+  questions: //{
+    [surveyQuestionSchema]
+    /*type: [mongoose.Schema.Types.ObjectId],
+    ref: 'SurveyQuestion',/
     // Makes sure that the questions array has at least one item
-    validate: [
-      function (questionsArray) {
-        return questionsArray.length >= 1;
-      }, 'Path `{PATH}` must have at least one item.'
-    ]
-  }
+    //validate: [
+    //  function (questionsArray) {
+    //    return questionsArray.length >= 1;
+    //  }, 'Path `{PATH}` must have at least one item.'
+    //]
+  //}
 });
 
-var SurveyTemplate = mongoose.model('SurveyTemplate', surveyTemplateSchema);
+//var SurveyTemplate = mongoose.model('SurveyTemplate', surveyTemplateSchema);
 module.exports = SurveyTemplate;
 
 /*author: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},

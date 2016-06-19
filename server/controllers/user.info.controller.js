@@ -2,7 +2,7 @@
 
 var mongoose = require('mongoose');
 var User = require('../models/user.js');
-var SurveyTemplate = require('../models/surveyTemplate.js');
+var Survey = require('../models/survey.js').Survey;
 var async = require('async');
 var crypto = require('crypto');
 var smtpTransport = require('nodemailer-smtp-transport');
@@ -87,7 +87,7 @@ exports.create = function(req, res) {
 
       console.log("User controller hit");
       console.log(user._id);
-
+/*
       // Generate all current surveys for this user
       SurveyTemplate.find({}, function (err, surveys) {
         _.each(surveys, function (survey) {
@@ -174,7 +174,7 @@ exports.create = function(req, res) {
           });
         });
       });
-
+*/
       User.findByIdAndUpdate(user.coaches[0],
         {$push: {"clients": user._id}},
         {safe: true},
@@ -382,4 +382,140 @@ exports.parseCSV = function (req, res) {
     console.log(JSON.stringify(output));
     res.send(output);
   });
+};
+
+/*
+  Creates a new survey, adds it to the user model, and persists to the db
+  Sends HTTP 400 if any errors occur, otherwise returns the updated document
+*/
+exports.createSurvey = function (req, res) {
+  var survey = new Survey(req.body);
+  // Makes sure a user's id was passed in
+  if ((typeof req.params.id) !== 'undefined') {
+    User.findById(req.params.id, function (err, user) {
+      if (!err) {
+        user.surveys.push(survey);
+        console.log(JSON.stringify(user));
+        user.save(function (err, user) {
+          if (!err) {
+            res.json(user);
+          } else {
+            res.status(400);
+            res.send(err);
+          }
+        })
+      } else {
+        res.status(400);
+        res.send(err);
+      }
+    })
+  } else {
+    res.sendStatus(400);
+  }
+};
+
+exports.listSurveys = function (req, res) {
+  // Checks if an id was passed in
+  if ((typeof req.params.id) !== undefined) {
+    User.findById(req.params.id, function (err, user) {
+      if (!err) {
+        res.json(user.surveys);
+      } else {
+        res.status(400);
+        res.send(err);
+      }
+    });
+  } else  {
+    res.sendStatus(400);
+  }
+};
+
+exports.getSurvey = function (req, res) {
+  if (((typeof req.params.user_id) !== 'undefined') && ((typeof req.params.survey_id) !== 'undefined')) {
+    User.findById(req.params.user_id, function (err, user) {
+      if (!err) {
+        var survey = user.surveys.id(req.params.survey_id);
+        if ((typeof survey) !== 'undefined') {
+          res.json(survey);
+        } else {
+          res.sendStatus(400);
+        }
+      } else {
+        res.status(400);
+        res.send(err);
+      }
+    });
+  } else {
+    res.sendStatus(400);
+  }
+};
+
+// Updates a survey in-place. Sends HTTP 400 on any errors and the updated user if successful
+exports.updateSurvey = function (req, res) {
+  if (((typeof req.params.user_id) !== 'undefined') && ((typeof req.params.survey_id) !== 'undefined')) {
+    User.findById(req.params.user_id, function (err, user) {
+      if (!err) {
+        // Go through all of the user's surveys
+        for (var i = 0; i < user.surveys.length; i++) {
+          // If the survey ids match...
+          console.log(user.surveys[i]._id);
+          console.log(req.params.survey_id);
+          if (user.surveys[i]._id == req.params.survey_id) {
+            // Get the properties of the objects
+            var reqProps = Object.keys(req.body);
+            var surveyProps = Object.keys(user.surveys[i].toObject());
+            // For all of the properties in the request body...
+            for (var j = 0; j < reqProps.length; j++) {
+              // Go through all of the properties in the user's survey...
+              for (var k = 0; k < surveyProps.length; k++) {
+                // If the properties match...
+                if (reqProps[j] == surveyProps[k]) {
+                  // Set the property in the user's survey to the property in the request body
+                  user.surveys[i][surveyProps[k]] = req.body[reqProps[j]];
+                }
+              }
+            }
+          }
+        }
+        user.save(function (err, user) {
+          if (!err) {
+            res.json(user);
+          } else {
+            res.status(400);
+            res.send(err);
+          }
+        });
+      } else {
+        res.status(400);
+        res.send(err);
+      }
+    });
+  } else {
+    res.sendStatus(400);
+  }
+};
+
+// Removes the survey with the specified id from the user. Sends HTTP 400 on any errors and the updated user object on success
+exports.removeSurvey = function (req, res) {
+  if (((typeof req.params.user_id) !== 'undefined') && ((typeof req.params.survey_id) !== 'undefined')) {
+    User.findById(req.params.user_id, function (err, user) {
+      if (!err) {
+        // Finds the survey by id and removes it
+        user.surveys.id(req.params.survey_id).remove();
+        user.save(function (err, user) {
+          if (!err) {
+            res.json(user);
+          } else {
+            res.status(400);
+            res.send(err);
+          }
+        });
+      } else {
+        res.status(400);
+        res.send(err);
+      }
+    });
+  } else {
+    res.sendStatus(400);
+  }
 };

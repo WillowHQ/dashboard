@@ -15,8 +15,7 @@ exports.render = function(req, res, next) {
           path: 'clients',
           model: 'User',
           populate: {
-            path: 'reminders',
-            model: 'Reminder',
+            //path: 'reminders',
             /*populate: {
               path: 'responses',
               model: 'ReminderResponse'
@@ -26,71 +25,75 @@ exports.render = function(req, res, next) {
         {
           path: 'clients',
           model: 'User',
-          populate: {
-            path: 'mostRecentResponse',
-            model: 'ReminderResponse',
-          }
+          //populate: {
+            //path: 'mostRecentResponse',
+            //model: 'ReminderResponse',
+          //}
         },
         {
           path: 'clients',
           model: 'User',
           populate: {
             path: 'surveys',
-            model: 'Survey',
-            populate: {
-              path: 'goals',
-              populate: {
-                path: 'reminder',
-                model: 'Reminder'
-              }
-            }
+            model: 'Survey'//,
+            //populate: {
+        //      path: 'goals',
+          //    populate: {
+            //    path: 'reminder',
+          //    }
+            //}
           }
         },
         {
           path: 'mostRecentResponse'
         },
         {
-          path: 'surveys',
-          populate: {path: 'reminder'}
-        },
-        {
-          path: 'reminders'
+          path: 'surveys'
+          //populate: {/*path: 'reminder'*/}
         }
+        /*{
+          path: 'reminders'
+        }*/
       ]
 
-      console.log('User.populate');
+      console.log(populateCoach);
+
+      populateCoach = {
+        path: 'clients',
+        model: 'User'
+      };
+
+//      console.log('User.populate');
       User.populate(req.user, populateCoach,
         function(err, user) {
-        if(user) {
-          console.log(user.clients.length);
+//        if(user) {
+          /*console.log(user.clients.length);
           console.log('populate dashboard');
           for(var i = 0; i < user.clients.length; i++) {
             user.clients[i].calcStatus();
-          }
+        }*/
 
           res.render(path.resolve('app/index'), {
-            user: JSON.stringify(user)
+            user: JSON.stringify(req.user)
           });
-        }
-        else {
-          console.log('ERROR LOADING DASHBOARD FOR SOME ODD REASON');
-          res.render('landing', {
+      //  }
+      //  else {
+        //  console.log('ERROR LOADING DASHBOARD FOR SOME ODD REASON');
+        //  res.render('landing', {
       			// Set the page title variable
-      			title: 'Fitpath',
+      	//		title: 'Fitpath',
       			// Set the flash message variable
-      			messages: req.flash('There was an error loading clients')
-      		});
-        }
+      	//		messages: req.flash('There was an error loading clients')
+      	//	});
+        //}
       });
     } else if (req.user.role == "user")  {
 
       var populateClient = [
         {
           path: 'reminders',
-          model: 'Reminder',
           populate: {
             path: 'responses',
-            model: 'ReminderResponse'
           }
         },
         {
@@ -100,7 +103,6 @@ exports.render = function(req, res, next) {
             path: 'goals',
             populate: {
               path: 'reminder',
-              model: 'Reminder'
             }
           }
         }

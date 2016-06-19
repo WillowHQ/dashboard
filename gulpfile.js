@@ -37,6 +37,8 @@ var paths = {
 
 gulp.task('ngrok', function () {
   // TODO: break app port out to config file
+  // TODO: add code to remove url from http router
+  // TODO: only run this on dev
   ngrok.connect(12557, function (err, url) {
     console.log('ngrok URL is: ' + url);
     var body = {
@@ -74,7 +76,7 @@ gulp.task('nodemon' ,['sass'], function (cb) {
 gulp.task('browser-sync', ['nodemon'], function() {
 	browserSync.init(null, {
     injectChanges: true,
-		proxy: "http://107.170.21.178:12557",
+		proxy: "http://localhost:12557",
         files: ["app/**/*.*"],
         browser: 'google chrome',
         port: 7000,

@@ -8,8 +8,10 @@ var surveyResponseSchema = new Schema({
   timeStamp: {type: Date, default: Date.now}
 });
 
-var SurveyResponse = mongoose.model('SurveyResponse', surveyResponseSchema);
+//var SurveyResponse = mongoose.model('SurveyResponse', surveyResponseSchema);
 
-module.exports = SurveyResponse;
-
+module.exports = {
+  //SurveyResponse: SurveyResponse,
+  surveyResponseSchema: surveyResponseSchema
+}
 //from: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
