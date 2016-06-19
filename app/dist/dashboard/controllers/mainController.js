@@ -1,9 +1,9 @@
 /// <reference path="../_all.ts" />
 var app;
+var userSelected;
 (function (app) {
     var dashboard;
     (function (dashboard) {
-        var userSelected;
         var userCoach;
         var scope;
         var MainController = (function () {
@@ -67,6 +67,7 @@ var app;
                 }
                 self.userService.selectedUser = self.selected;
                 userSelected = self.userService.selectedUser;
+                userSelected = self.selected;
                 scope = $scope;
                 this._ = window['_'];
 
@@ -611,10 +612,11 @@ var app;
                     // this.$http.post('uri').then((response) => response.data)
                     // after promise is succesful add to
                     // reminder.assigne.reminders.push()
+                    _reminder = reminder;
                     _this.$http.put('/api/users/' + self.selected._id + '/surveys/' +  reminder._id, reminder).then(function successCallback(reminder) {
                         console.log('returned junk: ' + JSON.stringify(reminder.data));
                         //  self.selected.reminders.push(response.data);
-                        if (self.updateReminder(reminder.data.surveys[reminder.data.surveys.length - 1])) {
+                        if (self.updateReminder(_reminder)) {
                             /*if (reminder.data.parent.id) {
                                 var id = reminder.data.parent.id.slice(1, 25);
                                 self.updateReminderInSurvey(id, reminder.data);
@@ -658,16 +660,17 @@ var app;
                 });
             };
 
-            MainController.prototype.updateSurveyResponses = function (survey) {
-              console.log('Inside updateSurveyResponses');
-              console.log(userCoach);
-              for (var i = 0; i < userCoach.surveyTemplates.length; i++) {
-                if (survey._id == userCoach.surveyTemplates[i]._id) {
-                  userCoach.surveyTemplates[i] = survey;
-                }
+            MainController.prototype.updateUser = function (user) {
+              console.log('Inside updateUser');
+              if (userSelected._id == user._id) {
+                console.log('Should be updating user');
+                userSelected = user;
+                userSelected.surveys = user.surveys;
               }
+              console.log(userSelected);
+              console.log(self.selected);
+              console.log(this.selected);
               scope.$apply();
-              console.log(survey);
             };
 
             MainController.prototype.updateReminder = function (reminder) {
@@ -680,6 +683,7 @@ var app;
                         console.log(userSelected.reminders);
                         console.log('Look ma, an update!');
                         return true;
+                        scope.$apply();
                     }
                 }
                 return false;
@@ -798,9 +802,9 @@ var app;
               MainController.prototype.updateReminder(response);
             });*/
 
-            surveySocket.on('survey', function (response) {
+            responseSocket.on('response', function (response) {
               console.log('Server sent a survey response');
-              MainController.prototype.updateSurveyResponses(response);
+              MainController.prototype.updateReminder(response);
             });
 
             messageSocket.on('message', function (message) {

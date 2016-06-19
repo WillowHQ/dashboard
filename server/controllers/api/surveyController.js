@@ -8,6 +8,19 @@ var User = require('../../models/user.js');
 var schedule = require('node-schedule');
 var async = require('async');
 
+// For websockets to send responses to the client
+var io = require('socket.io')(37392);
+
+var sockets = [];
+io.on('connection', function (socket) {
+  console.log('A user connected');
+  sockets.push(socket);
+  socket.on('disconnect', function () {
+    console.log('User disconnected');
+    sockets = _.without(sockets, socket);
+  });
+});
+
 convo.configure({
   port: 42362,
   twilio: {
@@ -133,6 +146,10 @@ exports.sendSurveys = function () {
                     response: response
                   };
                   users[userIndex].surveys[surveyIndex].questions[questionIndex].responses.push(response);
+
+                  // Send response to client
+                  io.emit('response', users[userIndex].surveys[surveyIndex]);
+
                   User.findByIdAndUpdate(users[userIndex]._id, users[userIndex], {new: true}, function (err, user) {
                     if (!err) {
                       console.log('Successfully updated user:');
@@ -157,10 +174,19 @@ exports.sendSurveys = function () {
                   if (!err) {
                     console.log();
                     console.log(users[userIndex].survey[surveyIndex].questions[questionIndex]);
-                    users[userIndex].survey[surveyIndex].questions[questionIndex].responses.push(response);
-                    console.log(users[userIndex].survey[surveyIndex].questions[questionIndex]);
+
+                    // Format the response correctly
+                    var response = {
+                      response: response
+                    };
+
+                    // Add the response to the specific user's survey
+                    users[userIndex].surveys[surveyIndex].questions[questionIndex].responses.push(response);
+                    console.log(users[userIndex].surveys[surveyIndex].questions[questionIndex]);
                     console.log();
                     // TODO: use websockets to push response to client side
+                    // Send response to client
+                    io.emit('response', users[userIndex].surveys[surveyIndex]);
                   }
                 }, function () {
                   convo.say(conclusion, options, function (err) {
