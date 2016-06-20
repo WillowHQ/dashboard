@@ -273,7 +273,7 @@ var userSelected;
                   }
                   // For all of the users that were assigned a survey
                   console.log(_this.selectedSurvey.selectedUsers);
-                  _this.selectedSurvey.selectedUsers.forEach(function (item, i) {
+                  async.forEachOfSeries(_this.selectedSurvey.selectedUsers, function (item, i, outerCallback) {
                     // Retreive the user from the db
                     console.log(_this.selectedSurvey.selectedUsers[i]);
                     _this.$http.get('/api/users/' + _this.selectedSurvey.selectedUsers[i]).then(function (response) {
@@ -282,7 +282,7 @@ var userSelected;
                       console.log(_this.selectedSurvey);
                       console.log(_this.selectedSurvey._id);
                       console.log(i + ' ' + _this.selectedSurvey.selectedUsers[i]);
-                      response.data.surveys.forEach(function (value, j) {
+                      async.forEachOfSeries(response.data.surveys, function (value, j, innerCallback) {
                         //for (var j = 0; j < response.data.surveys.length; j++) {
                         console.log(response.data.surveys[j]._id);
                         if (response.data.surveys[j]._id == _this.selectedSurvey._id) {
@@ -291,6 +291,7 @@ var userSelected;
                           console.log(_this.selectedSurvey.selectedUsers[i]);
                           _this.$http.put('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/' + self.selectedSurvey._id, updatedSurvey).then(function (response) {
                             console.log(response.data);
+                            innerCallback();
                           });
                         } else {
                           console.log("IN ELSE");
@@ -298,12 +299,12 @@ var userSelected;
                           _this.$http.post('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/', self.selectedSurvey).then(function (response) {
                             _this.$http.put('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/' + self.selectedSurvey._id, updatedSurvey).then(function (response) {
                               console.log(response.data);
+                              innerCallback();
                             });
                           });
                         }
-                        //}
-
-                      });
+                        // The last argument of the async.forEachOfSeries function is a callback to run after the entire array is processed
+                      }, outerCallback());
                     });
 
                   });
