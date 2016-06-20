@@ -61,6 +61,7 @@ exports.update = function (req, res) {
     {new: true},
     function (err, survey) {
       if (!err) {
+        console.log(JSON.stringify(survey));
         res.json(survey);
       } else {
         res.status(400);
@@ -173,7 +174,6 @@ exports.sendSurveys = function () {
                 convo.converse(questions, options, function (err, response, questionIndex) {
                   if (!err) {
                     console.log();
-                    console.log(users[userIndex].survey[surveyIndex].questions[questionIndex]);
 
                     // Format the response correctly
                     var response = {
@@ -191,7 +191,7 @@ exports.sendSurveys = function () {
                 }, function () {
                   convo.say(conclusion, options, function (err) {
                     console.log('The user has been surveyed.');
-                    User.findByIdAndUpdate(users[userIndex.id], users[userIndex], {new: true}, function (err, user) {
+                    User.findByIdAndUpdate(users[userIndex].id, users[userIndex], {new: true}, function (err, user) {
                       if (!err) {
                         console.log('User updated:');
                         console.log(user);

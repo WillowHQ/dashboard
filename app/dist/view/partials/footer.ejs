@@ -4,6 +4,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
   <script src="../../../bower_components/moment/moment.js"></script>
 
+  <!-- For async support, to make things easier on the frontend -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/async/1.5.2/async.min.js"></script>
+  <script>
+    var _async = async;
+  </script>
+
   <!-- For sending messages to clients -->
   <script src="http://localhost:45874/socket.io/socket.io.js"></script>
   <script>

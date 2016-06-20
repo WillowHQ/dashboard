@@ -102,8 +102,21 @@ var userSelected;
                 }
                 var questions = [];
                 for (var key in this.questions) {
+                  // Rename the 'questionHeader' property to 'header'
+                  if (this.questions[key].hasOwnProperty('questionHeader')) {
+                    this.questions[key].header = this.questions[key].questionHeader;
+                    delete this.questions[key].questionHeader;
+                  }
+
+                  // Turn the 'type' property into the correct for for the backend
+                  if (this.questions[key].type == 'Yes/No') this.questions[key].type = 'YESNO';
+                  if (this.questions[key].type == 'Written Answer') this.questions[key].type = 'WRITTEN';
+                  if (this.questions[key].type == 'Scale from 1 to 5') this.questions[key].type = 'SCALE';
+
                   questions.push(this.questions[key]);
                 }
+
+
                 var surveyTemplate = {
                   title: this.surveyTitle,
                   questions : questions,
@@ -111,10 +124,10 @@ var userSelected;
                 };
                 console.log(surveyTemplate);
 
-                _this.$http.post('/api/surveytemplates/', surveyTemplate).then(function successCallback(response) {
+                _this.$http.post('/api/users/' + this.selected._id + '/surveys/', surveyTemplate).then(function successCallback(response) {
                 console.log(response.data);
                 console.log(this.user);
-                this.user.surveyTemplates.push(response.data);
+                self.selected.surveys.push(surveyTemplate);
 
 
                 console.log("reseting save!");
@@ -250,9 +263,52 @@ var userSelected;
                   console.log();
                   console.log(_this.selectedSurvey.selectedUsers);
                   console.log();
-                  _this.$http.post('/api/surveyTemplate/schedule', _this.selectedSurvey).then(function (response) {
-                    console.log(response.data);
+                  console.log(self.selectedSurvey);
+
+                  // Only thing that needs changing is the time, so:
+                  var updatedSurvey = {
+                    hour: self.selectedSurvey.timeOfDay.getHours(),
+                    minute: self.selectedSurvey.timeOfDay.getMinutes(),
+                    days: self.selectedSurvey.days
+                  }
+                  // For all of the users that were assigned a survey
+                  console.log(_this.selectedSurvey.selectedUsers);
+                  _this.selectedSurvey.selectedUsers.forEach(function (item, i) {
+                    // Retreive the user from the db
+                    console.log(_this.selectedSurvey.selectedUsers[i]);
+                    _this.$http.get('/api/users/' + _this.selectedSurvey.selectedUsers[i]).then(function (response) {
+                      console.log(response);
+                      // Check if the user has a survey with the selectedSurvey's id
+                      console.log(_this.selectedSurvey);
+                      console.log(_this.selectedSurvey._id);
+                      console.log(i + ' ' + _this.selectedSurvey.selectedUsers[i]);
+                      response.data.surveys.forEach(function (value, j) {
+                        //for (var j = 0; j < response.data.surveys.length; j++) {
+                        console.log(response.data.surveys[j]._id);
+                        if (response.data.surveys[j]._id == _this.selectedSurvey._id) {
+                          console.log("IN IF");
+                          // Update their survey with the time to be sent out
+                          console.log(_this.selectedSurvey.selectedUsers[i]);
+                          _this.$http.put('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/' + self.selectedSurvey._id, updatedSurvey).then(function (response) {
+                            console.log(response.data);
+                          });
+                        } else {
+                          console.log("IN ELSE");
+                          // Add the survey and then update it
+                          _this.$http.post('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/', self.selectedSurvey).then(function (response) {
+                            _this.$http.put('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/' + self.selectedSurvey._id, updatedSurvey).then(function (response) {
+                              console.log(response.data);
+                            });
+                          });
+                        }
+                        //}
+
+                      });
+                    });
+
                   });
+                  //for (var i = 0; i < _this.selectedSurvey.selectedUsers.length; i++) {
+                  //}
                 });
 
 
@@ -615,6 +671,11 @@ var userSelected;
                     _reminder = reminder;
                     _this.$http.put('/api/users/' + self.selected._id + '/surveys/' +  reminder._id, reminder).then(function successCallback(reminder) {
                         console.log('returned junk: ' + JSON.stringify(reminder.data));
+                        for (var i = 0; i < reminder.data.surveys.length; i++) {
+                          if (reminder.data.surveys[i]._id == _reminder._id) {
+                            _reminder.questions = reminder.data.surveys[i].questions;
+                          }
+                        }
                         //  self.selected.reminders.push(response.data);
                         if (self.updateReminder(_reminder)) {
                             /*if (reminder.data.parent.id) {

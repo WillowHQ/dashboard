@@ -7,6 +7,7 @@ var user = require('../../controllers/user.info.controller.js');
 module.exports = function(app) {
 
   app.post('/api/user/create', user.create);
+  app.get('/api/users/:id', user.read);
 
   app.post('/api/users/:id/surveys', user.createSurvey);
   app.get('/api/users/:id/surveys', user.listSurveys);

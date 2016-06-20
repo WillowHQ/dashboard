@@ -194,6 +194,8 @@ exports.create = function(req, res) {
     });
   };
 
+
+
   //Test: need my our id(colins)
       // User.populate(
       //   reminder.assignee,
@@ -205,6 +207,17 @@ exports.create = function(req, res) {
       //     }
       //   }
       // );
+
+exports.read = function (req, res) {
+  User.findById(req.params.id, function (err, user) {
+    if (!err) {
+      res.json(user);
+    } else {
+      res.status(400);
+      res.send(err);
+    }
+  });
+};
 
 exports.updateCoach = function(req, res){
   console.log("Im a coach!");
@@ -464,6 +477,20 @@ exports.updateSurvey = function (req, res) {
             // Get the properties of the objects
             var reqProps = Object.keys(req.body);
             var surveyProps = Object.keys(user.surveys[i].toObject());
+
+            // Next two if statements are for the case of a newly created survey getting updated for the first time
+            // If reqProps contains 'hour'
+            if (_.contains(reqProps, 'hour')) {
+              // Assign the value of hour from req to survey
+              user.surveys[i].hour = req.body.hour;
+            }
+
+            // If reqProps contains 'minute'
+            if (_.contains(reqProps, 'minute')) {
+              // Assign the value of minute from req to survey
+              user.surveys[i].minute = req.body.minute;
+            }
+
             // For all of the properties in the request body...
             for (var j = 0; j < reqProps.length; j++) {
               // Go through all of the properties in the user's survey...
@@ -479,6 +506,7 @@ exports.updateSurvey = function (req, res) {
         }
         user.save(function (err, user) {
           if (!err) {
+            console.log(user);
             res.json(user);
           } else {
             res.status(400);

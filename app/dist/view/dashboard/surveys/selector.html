@@ -6,7 +6,8 @@
 
       <md-select ng-model = "vm.selectedSurvey" >
         <label> Surveys</label>
-        <md-option ng-repeat = "st in vm.user.surveyTemplates" ng-value = "st">
+        <md-option ng-repeat = "st in vm.selected.surveys" ng-value = "st" ng-if="st.questions.length > 1">
+          <!-- If the survey is not actually a reminder -->
           {{st.title}}
         </md-option>
       </md-select>
