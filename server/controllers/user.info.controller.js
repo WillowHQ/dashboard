@@ -370,8 +370,10 @@ exports.update = function(req,res) {
 
 
 exports.delete = function(req, res){
-
-
+  console.log("hey");
+  console.log(req.body);
+  
+  res.send("403");
 
 
 }

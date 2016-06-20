@@ -13,9 +13,9 @@
     <span md-highlight-text="vm.searchText" md-highlight-flags="^i">{{item.display}}</span>
 </md-autocomplete> -->
 
-<md-content id="client-overview-container" class="dashboard-container overlay-5 padded-content-page" layout="row" flex>
-  <div layout="column" layout-sm="column" layout-margin flex>
-     <md-card>
+<md-content id="client-overview-container" class="dashboard-container overlay-5 padded-content-page" layout="row"  >
+  <div layout="column" layout-sm="column" layout-margin flex >
+     <md-card class = "datatableback">
        <!-- Filter Selection -->
        <md-toolbar class="md-table-toolbar" style="background-color: white;" ng-hide="vm.filter.show">
          <div class="md-toolbar-tools">
@@ -55,7 +55,7 @@
        </md-toolbar>
        <!-- Search -->
        <md-toolbar class="md-table-toolbar" style="background-color: white;" ng-show="vm.filter.show || options.rowSelection || !selected.length">
-        <div class="md-toolbar-tools" >
+        <div class="md-toolbar-tools">
           <md-icon class="material-icons">search</md-icon>
           <form flex="" name="filter.form" class="ng-valid flex ng-valid-parse ng-pristine">
 
@@ -89,14 +89,22 @@
           style="padding-right: 16px; padding-left: 13px;">
         </md-contact-chips>
        </md-toolbar>
-      <md-card-content style="padding-top: 0px;">
-        <md-table-container>
-               <table md-table class="md-primary md-data-table" multiple md-row-select ng-model="vm.selected" id="client-table">
+      <md-card-content style="padding-top: 0px; background-color: white">
+        <md-table-container class = "datatable" >
+               <table md-table class="md-primary md-data-table" multiple md-row-select ng-model="vm.selected" id="client-table" >
                   <thead md-head md-order="vm.query.order">
                         <tr md-row>
                             <th md-column>Clients</th>
+                            <th md-column>Pipeline</th>
+                            <th md-column>Reminder</th>
+                            <th md-column>Reminder Response</th>
+                            <th md-column>Info Survey - Title </th>
+                            <th md-column>Info Survey - Weapon </th>
+                            <th md-column>Info Survey - Home </th>
 
-                            <th md-column  ng-repeat = "question in vm.selectedDataSurvey.questions"><span translate> {{question.questionHeader}}</span></th>
+                            <!-- <th md-column  ng-repeat = "question in vm.selectedDataSurvey.questions"> {{question.questionHeader}}</th> -->
+
+
 
                             <!--
                             {vm.user.surveytemple[0].questions}
@@ -117,19 +125,50 @@
                             <!-- <th md-column md-numberic md-order-by="id"><span translate>{{vm.columns.id}}</span></th> -->
                         </tr>
                     </thead>
-                    <tbody md-body >
+                    <tbody md-body>
+                      <tr  md-row md-auto-select="false" md-select="client" ng-repeat="client in vm.persons| orderBy: vm.query.order | filter:vm.query.filter  | limitTo: vm.query.limit: (vm.query.page - 1) * vm.query.limit">
+
+
+                        <td md-cell>
+                          <img ng-src="{{client.imgUrl}}" style="border-radius: 50%; width: 50px; margin: 10px;" >
+                          {{client.username}}
+                        </td>
+                        <td md-cell>
+                          {{client.pipelineStage}}
+                        </td>
+                        <td md-cell>
+                          <img ng-src="{{client.reminderStatus}}" style="border-radius: 50%; width: 15px; margin: 10px;" >
+                          {{client.reminderQuestion}}
+                        </td>
+                        <td md-cell>
+                          {{client.testReminder}}
+                        </td>
+                        <td md-cell ng-repeat = "r in client.testResponses">
+                          {{r}}
+                        </td>
+
+
+                      </tr>
+
+                    </tbody>
+                    <!-- <tbody md-body >
                         <tr md-row md-auto-select="false" md-select="client" ng-repeat="client in vm.clients | orderBy: vm.query.order | filter:vm.query.filter  | limitTo: vm.query.limit: (vm.query.page - 1) * vm.query.limit">
 
-                            <td  md-cell>
-                              <img ng-src="{{client.imgUrl}}" style="border-radius: 50%; width: 50px; margin: 10px;" />
+                            <td md-cell>
+                              <img ng-src="{{client.imgUrl}}" style="border-radius: 50%; width: 50px; margin: 10px;" >
                               {{client.username}}
                             </td>
+
                             <td md-cell>
 
                               {{client.pipelineStage}}
                             </td>
 
-                            <!-- <td md-cell>
+                            <td md-cell ng-repeat = "response in vm.testResponses">
+                              {{response}}
+                            </td>
+
+                            <td md-cell>
                               {{client.reminders[client.reminders.length-1].title}}
                             </td>
                             <td md-cell>
@@ -137,7 +176,7 @@
                             </td>
                             <td md-cell>
                               {{client.surveyTemplates[client.surveyTemplates.length-1].title}}
-                            </td> -->
+                            </td>
 
 
 
@@ -149,7 +188,8 @@
                             </td>
 
                         </tr>
-                    </tbody>
+
+                    </tbody> -->
                </table>
         </md-table-container>
         <md-table-pagination md-limit="vm.query.limit" md-limit-options="[5, 10, 15]" md-page="vm.query.page" md-total="{{vm.clients.length}}" md-page-select></md-table-pagination>

@@ -3,18 +3,18 @@
 
     <div  layout = "row" layout-padding style="background-color: white; margin: 5px;" >
 
-        <div md-whiteframe = "3"  flex = "15" layout = "column" style="background-color: #C3E1EE; margin: 5px;"  >
+        <div md-whiteframe = "3"  flex = "15" layout = "column" style="background-color: #FFFFFF; margin: 5px;"  >
           <div ng-if="vm.isCoach(vm.selected)">
-            <a class="secondary-content"><i class="material-icons" style="color: #444; margin-top: 15px; font-size: 60px;">face</i></a>
-            <md-content style="background-color: #C3E1EE; margin: 5px;">
+            <a class="secondary-content"><i class="material-icons" style="color:#FFFFFF; margin-top: 15px; font-size: 60px;">face</i></a>
+            <md-content style="background-color; #FFFFFF; margin: 5px;">
               <h1>{{vm.selected.username}}</h1>
             </md-content>
           </div>
           <!-- change this -->
-        
+
             <div ng-if="!vm.isCoach(vm.selected)">
               <img ng-src="{{vm.selected.imgUrl}}" class="avatar"></md-icon>
-              <md-content style="background-color: #C3E1EE; margin: 5px;">
+              <md-content style="background-color:#FFFFFF; margin: 5px;">
                 <h1>
                   {{vm.selected.firstName +" "+ vm.selected.lastName}}
                 </h1>
@@ -35,8 +35,8 @@
             <md-icon md-font-set = "material-icons"> info </md-icon>
         </div>
       -->
-        <div  md-whiteframe = "3"  flex = "80" layout = "row" style = "background-color: #C3E1EE; margin: 5px;"  >
-          <md-content flex  layout style = "height: 200px; background-color: #C3E1EE;">
+        <div  md-whiteframe = "3"  flex = "80" layout = "row" style = "background-color:#FFFFFF; margin: 5px;"  >
+          <md-content flex  layout style = "height: 200px; background-color:#FFFFFF;">
 
             <md-input-container layout = "column" flex = "95" style = "height: 150px" >
               <label>Biography</label>

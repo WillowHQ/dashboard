@@ -3,6 +3,7 @@
 
 var gulp = require('gulp');
 var nodemon = require('gulp-nodemon');
+var gulpNgConfig = require('gulp-ng-config');
 var sass = require('gulp-sass');
     browserSync = require('browser-sync');
     reload = browserSync.reload;
@@ -33,7 +34,22 @@ var paths = {
   server: ['server/**/*.js']
 }
 
-gulp.task('sass', function () {
+
+gulp.task('config', function(){
+  return gulp.src('configFile.json')
+        .pipe(gulpNgConfig('dashboard.config', {wrap:true}))
+        .pipe(gulp.dest('.'))
+});
+
+
+
+
+
+
+
+
+
+gulp.task('sass', ['config'], function () {
   return gulp.src('app/dist/triangular/**/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest('app/dist/triangular/assets/css'));

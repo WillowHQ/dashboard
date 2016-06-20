@@ -55,7 +55,7 @@ var app;
                 }
                 else if (this.user.role == "coach") {
                     this.clients = this.user.clients;
-                    self.selected = this.clients[0];
+                    //self.selected = this.clients[0];
 
                 }
                 self.userService.selectedUser = self.selected;
@@ -565,6 +565,7 @@ var app;
                   self.openToast("Note added");
               }, function () {
                   console.log('You cancelled the dialog.');
+
               });
             };
 
