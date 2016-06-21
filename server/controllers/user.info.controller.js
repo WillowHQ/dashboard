@@ -416,12 +416,12 @@ exports.createSurvey = function (req, res) {
             res.status(400);
             res.send(err);
           }
-        })
+        });
       } else {
         res.status(400);
         res.send(err);
       }
-    })
+    });
   } else {
     res.sendStatus(400);
   }

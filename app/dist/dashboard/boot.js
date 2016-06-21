@@ -7,6 +7,21 @@ var app;
             .module('dashboard', ['ngMaterial', 'ngMdIcons', 'ngMessages', 'ngRoute',
             'users', 'md.data.table'])
             .controller('MainController', ['$scope', 'userService', '$mdSidenav', '$mdBottomSheet', '$mdToast', '$mdDialog', '$mdMedia', '$http', dashboard.MainController])
+            .filter('reminderSelectedUserIdFilter', function () {
+              return function (items, id) {
+                var filtered = [];
+                for (var i = 0; i < items.length; i++) {
+                  var item = items[i];
+                  for (var j = 0; j < item.selectedUsers.length; j++) {
+                    var selectedUserId = item.selectedUsers[i];
+                    if (id == selectedUserId) {
+                      filtered.push(item);
+                    }
+                  }
+                }
+                return filtered;
+              };
+            })
             .config(function ($mdThemingProvider, $mdIconProvider, $routeProvider, $locationProvider) {
             $mdIconProvider
                 .defaultIconSet("./assets/svg/avatars.svg", 128)

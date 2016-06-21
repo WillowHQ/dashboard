@@ -93,13 +93,23 @@ var userSelected;
               };
 
               MainController.prototype.saveSurvey = function($event){
+                console.log('Inside saveSurvey');
+
+                // Used to save the current value of 'this' for use inside callbacks further down
                 var _this = this;
                 var self = this;
-                console.log("hey");
                 console.log(this.questions);
+
+                // Set all of the responses to an empty array.
                 for (var key in this.questions) {
                   this.questions[key].responses = [];
                 }
+
+                /*
+                 * This loop serves two purposes: transform the questions object
+                 * into a questions array, and transform some of the properties
+                 * into the correct form for the backend.
+                 */
                 var questions = [];
                 for (var key in this.questions) {
                   // Rename the 'questionHeader' property to 'header'
@@ -108,33 +118,44 @@ var userSelected;
                     delete this.questions[key].questionHeader;
                   }
 
-                  // Turn the 'type' property into the correct for for the backend
+                  // Turn the 'type' property into the correct form for the backend
                   if (this.questions[key].type == 'Yes/No') this.questions[key].type = 'YESNO';
                   if (this.questions[key].type == 'Written Answer') this.questions[key].type = 'WRITTEN';
                   if (this.questions[key].type == 'Scale from 1 to 5') this.questions[key].type = 'SCALE';
 
+                  // Add the current question to the questions array
                   questions.push(this.questions[key]);
                 }
 
-
+                // Get the data into a form the backend likes
                 var surveyTemplate = {
                   title: this.surveyTitle,
                   questions : questions,
                   author : this.user._id
                 };
-                console.log(surveyTemplate);
 
-                _this.$http.post('/api/users/' + this.selected._id + '/surveys/', surveyTemplate).then(function successCallback(response) {
-                console.log(response.data);
-                console.log(this.user);
-                self.selected.surveys.push(surveyTemplate);
+                /*
+                 * Surveys are stored as a 'template' in the coach.
+                 * A survey template is a survey that hasn't been assigned to a
+                 * client and that has empty days, hour, and minute fields.
+                 */
+
+                 // Post the survey to the server
+                _this.$http.post('/api/users/' + this.user._id + '/surveys/', surveyTemplate).then(function successCallback(response) {
+                  console.log(response.data);
+                  console.log(this.user);
+
+                  // Store the survey on the client
+                  self.user.surveys.push(surveyTemplate);
 
 
-                console.log("reseting save!");
+                  console.log("reseting save!");
 
-                console.log("HEWGFRBHI");
+                  console.log("HEWGFRBHI");
 
                 });
+
+                // Reset the values of the form
                 console.log(this.questions);
                 this.questions = null;
                 this.surveyTitle = null;
@@ -265,54 +286,25 @@ var userSelected;
                   console.log();
                   console.log(self.selectedSurvey);
 
-                  // Only thing that needs changing is the time, so:
+                  // Only thing that needs changing is the time and the 'repeat' property, so:
                   var updatedSurvey = {
+                    repeat: self.selectedSurvey.repeat,
+                    days: self.selectedSurvey.days,
                     hour: self.selectedSurvey.timeOfDay.getHours(),
-                    minute: self.selectedSurvey.timeOfDay.getMinutes(),
-                    days: self.selectedSurvey.days
-                  }
+                    minute: self.selectedSurvey.timeOfDay.getMinutes()
+                  };
+
                   // For all of the users that were assigned a survey
-                  console.log(_this.selectedSurvey.selectedUsers);
-                  async.forEachOfSeries(_this.selectedSurvey.selectedUsers, function (item, i, outerCallback) {
-                    // Retreive the user from the db
-                    console.log(_this.selectedSurvey.selectedUsers[i]);
-                    _this.$http.get('/api/users/' + _this.selectedSurvey.selectedUsers[i]).then(function (response) {
-                      console.log(response);
-                      // Check if the user has a survey with the selectedSurvey's id
-                      console.log(_this.selectedSurvey);
-                      console.log(_this.selectedSurvey._id);
-                      console.log(i + ' ' + _this.selectedSurvey.selectedUsers[i]);
-                      async.forEachOfSeries(response.data.surveys, function (value, j, innerCallback) {
-                        //for (var j = 0; j < response.data.surveys.length; j++) {
-                        console.log(response.data.surveys[j]._id);
-                        if (response.data.surveys[j]._id == _this.selectedSurvey._id) {
-                          console.log("IN IF");
-                          // Update their survey with the time to be sent out
-                          console.log(_this.selectedSurvey.selectedUsers[i]);
-                          _this.$http.put('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/' + self.selectedSurvey._id, updatedSurvey).then(function (response) {
-                            console.log(response.data);
-                            innerCallback();
-                          });
-                        } else {
-                          console.log("IN ELSE");
-                          // Add the survey and then update it
-                          _this.$http.post('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/', self.selectedSurvey).then(function (response) {
-                            _this.$http.put('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/' + self.selectedSurvey._id, updatedSurvey).then(function (response) {
-                              console.log(response.data);
-                              innerCallback();
-                            });
-                          });
-                        }
-                        // The last argument of the async.forEachOfSeries function is a callback to run after the entire array is processed
-                      }, outerCallback());
+                  for (var i = 0; i < _this.selectedSurvey.selectedUsers.length; i++) {
+                    // POST the selectedSurvey to the user
+                    self.$http.post('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/', _this.selectedSurvey).then(function (response) {
+                      // PUT the updatedSurvey to the user
+                      self.$http.put('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/' + _this.selectedSurvey._id, updatedSurvey).then(function (response) {
+                        console.log(response.data);
+                      });
                     });
-
-                  });
-                  //for (var i = 0; i < _this.selectedSurvey.selectedUsers.length; i++) {
-                  //}
+                  }
                 });
-
-
               };
 
               MainController.prototype.previewSurvey = function ($event) {
@@ -591,14 +583,12 @@ var userSelected;
                       question: reminder.title
                     };
                     reminder.repeat = true;
-                    // Post request, and push onto users local list of reminders
-                    // this.$http.post('uri').then((response) => response.data)
-                    // after promise is succesful add to
-                    // reminder.assigne.reminders.push()
+                    reminder.selectedUsers = [];
+                    reminder.selectedUsers.push(self.selected._id)
 
-                    _this.$http.post('/api/users/' + self.selected.id + '/surveys/', reminder).then(function successCallback(response) {
-                        // Push the user's newest survey into the reminders array for front-end display
-                        self.selected.reminders.push(response.data.surveys[response.data.surveys.length - 1]);
+                    _this.$http.post('/api/users/' + self.user._id + '/surveys/', reminder).then(function successCallback(response) {
+                        // Push the newest survey into the reminders array for front-end display
+                        self.user.reminders.push(response.data.surveys[response.data.surveys.length - 1]);
                         console.log(JSON.stringify(response.data.surveys[response.data.surveys.length - 1]));
                     });
 

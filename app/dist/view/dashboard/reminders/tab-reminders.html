@@ -7,9 +7,9 @@
     <ng-md-icon icon="add"></ng-md-icon>
   </md-button>
 
-  <p  ng-if="!vm.selected.reminders.length">No reminders for  {{vm.selected.firstName +" " + vm.selected.lastName}}, yet.</p>
+  <p  ng-if="(vm.user.reminders | reminderSelectedUserIdFilter : vm.selected._id).length == 0">No reminders for  {{vm.selected.firstName +" " + vm.selected.lastName}}, yet.</p>
 
-  <md-card md-whiteframe = "3" ng-repeat="reminder in vm.selected.reminders | orderBy: '-date':true track by reminder._id" >
+  <md-card md-whiteframe = "3" ng-repeat="reminder in vm.user.reminders | reminderSelectedUserIdFilter: vm.selected._id | orderBy: '-date':true track by reminder._id" >
 
     <div layout="row" >
 
