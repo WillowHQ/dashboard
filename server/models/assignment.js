@@ -20,6 +20,7 @@ var assignmentSchema = new Schema({
   hour: {type: Number, min: 0, max: 23},
   minute: {type: Number, min:0, max:59},
 
+  //client not coach
   userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
 
   surveyTemplateId: {type: mongoose.Schema.Types.ObjectId, ref: 'SurveyTemplate'},

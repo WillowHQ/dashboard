@@ -6,7 +6,7 @@
   <md-button  class="md-fab" aria-label="Add" ng-click="vm.addReminder($event)" style = "right: 5px;">
     <ng-md-icon icon="add"></ng-md-icon>
   </md-button>
-
+  <!-- Change all this -->
   <p  ng-if="!vm.selected.reminders.length">No reminders for  {{vm.selected.firstName +" " + vm.selected.lastName}}, yet.</p>
 
   <md-card md-whiteframe = "3" ng-repeat="reminder in vm.selected.reminders | orderBy: '-date':true track by reminder._id" >
@@ -18,7 +18,7 @@
 
 
           <md-card-content layout-padding layout = "column" flex = "40" >
-            <h3> {{reminder.title}} </h3>
+            <h3> {{reminder.body}} </h3>
           </md-card-content>
 
           <md-card-content layout = "column"  flex = "60" layout-padding>

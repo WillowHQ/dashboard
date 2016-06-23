@@ -7,7 +7,7 @@ var surveyQuestionSchema = new Schema({
   question: {type: String},
   questionHeader: {type: String},
   type: {type: String},
-  response: {type: mongoose.Schema.Types.Object, ref: 'SurveyResponse'}
+  // response: {type: mongoose.Schema.Types.Object, ref: 'SurveyResponse'}
 });
 
 var SurveyQuestion = mongoose.model('SurveyQuestion', surveyQuestionSchema);

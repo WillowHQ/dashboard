@@ -29,6 +29,7 @@ var app;
                 this.counter = 0;
                 this.questionAmount = [0];
                 this.selectSurveyUser = [];
+                this.question = [];
 
                 //pipelineStage array
                 this.pipelineOptions = [{type: "lead"}, {type: "trail"}, {type: "active-client"}, {type: "previous-client"},{type: "archived"},{type: "NA"} ];
@@ -560,6 +561,7 @@ var app;
 
 
             MainController.prototype.addReminder = function ($event) {
+                console.log("Hey, Im a reminder");
                 var _this = this;
                 var self = this;
                 var useFullScreen = (this.$mdMedia('sm') || this.$mdMedia('xs'));
@@ -576,14 +578,53 @@ var app;
                     }
                 }).then(function (reminder) {
                     console.log(reminder);
-                    // Post request, and push onto users local list of reminders
-                    // this.$http.post('uri').then((response) => response.data)
-                    // after promise is succesful add to
-                    // reminder.assigne.reminders.push()
 
-                    _this.$http.post('/api/reminder/create', reminder).then(function successCallback(response) {
-                        self.selected.reminders.push(response.data);
+
+                    var reminderSent = {
+                      body: reminder.title,
+                      author : this.user._id,
+                      assignee : reminder.assignee
+
+                      // title:reminder.title.slice(0,7),
+                      // questions:[{
+                      //   type: "WRITTEN",
+                      //   header: reminder.title.slice(0,7),
+                      //   question: reminder.title
+                      // }],
+                    };
+                    console.log(reminderSent);
+                    console.log('here');
+                    _this.$http.post('/api/reminder/create', reminderSent).then(function successCallback(response) {
                         console.log(response.data);
+
+                        var surveyUserAssign = {
+                          repeat: true,
+                          days: reminder.days,
+                          hour: reminder.hour,
+                          minute: reminder.minute,
+                          userId: reminder.assignee,
+                          reminderId:response.data._id,
+                          type: "reminder"
+                        }
+                        // POST the selectedSurvey to the user
+
+                        console.log("survey if " + surveyUserAssign.reminderId);
+                        console.log("user id" + surveyUserAssign.userId);
+                        self.selected.reminders.push(response.data);
+                        //first make a object that can be turned into a object on the back end
+
+
+                        self.$http.post('/api/assignment/create' , surveyUserAssign).then(function (response){
+                          console.log("this sungun worked" + response.data);
+
+                          //self.selected.assignments.push(response.data);
+
+                        });
+
+                        //reminders now need adding to the front-end md-cards
+
+
+
                     });
 
                     self.openToast("Reminder added");
