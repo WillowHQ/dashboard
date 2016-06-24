@@ -10,8 +10,9 @@ var fs = require('fs')
 exports.addUserReminder = function(req, res){
   console.log("addReminder in user.info");
   var reminder = new Reminder(req.body);
-  User.findByIdAndUpdate(req.body.author,
-    {$push: {"reminders": req.body}},
+  console.log(reminder);
+  User.findByIdAndUpdate(req.body.assignee,
+    {$push: {"reminders": reminder}},
     {safe:true},
     function(err, user){
       if(err){
