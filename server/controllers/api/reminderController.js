@@ -11,26 +11,34 @@ exports.create = function(req, res) {
   //SurveyTempalte.
   console.log(Reminder);
   reminder.save(function (err) {
-    if(!err) {
-      console.log("NO Error")
-      User.findByIdAndUpdate(
-          reminder.assignee,
-          {$push: {"reminders": reminder}},
-          {safe: true},
-          function(err, user) {
-            if(err) {
-              console.log(err);
-            }
-            else {
-              console.log("Reminder pushed to coach.");
-
-            }
-          }
-        );
-
-        console.log(reminder._id);
-        res.send(reminder);
-
+    // if(!err) {
+    //   console.log("NO Error")
+    //   User.findByIdAndUpdate(
+    //       reminder.assignee,
+    //       {$push: {"reminders": reminder}},
+    //       {safe: true},
+    //       function(err, user) {
+    //         if(err) {
+    //           console.log(err);
+    //         }
+    //         else {
+    //           console.log("Reminder pushed to coach.");
+    //
+    //         }
+    //       }
+    //     );
+    //
+    //     console.log(reminder._id);
+    //     res.send(reminder);
+    //
+    // }
+    if(!err){
+      console.log("Good");
+      send.sendStatus(200);
+    }
+    else{
+      console.log("BAD");
+      send.sendStatus(409);
     }
   });
 }
