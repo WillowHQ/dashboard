@@ -594,8 +594,8 @@ var app;
                     };
                     console.log(reminderSent);
                     console.log('here');
-                    _this.$http.post('/api/reminder/create', reminderSent).then(function successCallback(response) {
-                        console.log(response.data);
+                    _this.$http.post('/api/reminder/create', reminderSent).then(function successCallback(responseReminder) {
+                        console.log(responseReminder.data);
 
                         var surveyUserAssign = {
                           repeat: true,
@@ -603,23 +603,27 @@ var app;
                           hour: reminder.hour,
                           minute: reminder.minute,
                           userId: reminder.assignee,
-                          reminderId:response.data._id,
+                          reminderId:responseReminder.data._id,
                           type: "reminder"
                         }
                         // POST the selectedSurvey to the user
 
                         console.log("survey if " + surveyUserAssign.reminderId);
                         console.log("user id" + surveyUserAssign.userId);
-                        self.selected.reminders.push(response.data);
+                        self.selected.reminders.push(responseReminder.data);
                         //first make a object that can be turned into a object on the back end
+                        self.$http.post('/api/user/reminder/add', responseReminder.data).then(function(responseUser){
+                          console.log(responseUser);
 
-
-                        self.$http.post('/api/assignment/create' , surveyUserAssign).then(function (response){
-                          console.log("this sungun worked" + response.data);
-
-                          //self.selected.assignments.push(response.data);
+                          // self.$http.post('/api/assignment/create' , surveyUserAssign).then(function (responseAssignment){
+                          //   console.log("this sungun worked" + response.data);
+                          //
+                          //   //self.selected.assignments.push(response.data);
+                          //
+                          // });
 
                         });
+
 
                         //reminders now need adding to the front-end md-cards
 

@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose');
 var User = require('../models/user.js');
+var Reminder = require('../models/reminder.js')
 var SurveyTemplate = require('../models/surveyTemplate.js');
 var async = require('async');
 var crypto = require('crypto');
@@ -13,6 +14,9 @@ var _ = require('underscore');
 var Pandorabot = require('pb-node');
 var builder = require('xmlbuilder');
 var fs = require('fs');
+
+
+
 
 var botOptions = {
   url: 'https://aiaas.pandorabots.com',

@@ -7,38 +7,33 @@ var request = require('request');
 var fs = require('fs')
 
 exports.create = function(req, res) {
+  console.log(req.body);
   var reminder = new Reminder(req.body);
   //SurveyTempalte.
-  console.log(Reminder);
+  console.log(reminder);
+  console.log("what is this?");
   reminder.save(function (err) {
-    // if(!err) {
-    //   console.log("NO Error")
-    //   User.findByIdAndUpdate(
-    //       reminder.assignee,
-    //       {$push: {"reminders": reminder}},
-    //       {safe: true},
-    //       function(err, user) {
-    //         if(err) {
-    //           console.log(err);
-    //         }
-    //         else {
-    //           console.log("Reminder pushed to coach.");
-    //
-    //         }
-    //       }
-    //     );
-    //
-    //     console.log(reminder._id);
-    //     res.send(reminder);
-    //
-    // }
     if(!err){
       console.log("Good");
-      send.sendStatus(200);
     }
     else{
       console.log("BAD");
       send.sendStatus(409);
     }
   });
-}
+  res.send(reminder);
+};
+
+exports.delete = function (req, res) {
+
+};
+
+
+exports.update = function (req, res){
+
+};
+
+
+exports.read = function (req, rese) {
+
+};

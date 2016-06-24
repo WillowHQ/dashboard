@@ -2,15 +2,16 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var Reminder = require('/.reminder.js');
+var Reminder = require('./reminder.js');
+
 
 var responseSchema = new Schema({
 
   response: {type: String},
   createdBy:{type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   responded:{type:Boolean, default:'false'},
-  timeStamp: {type: Date, default: Date.now}
-  reminder: {type: mongoose.Schena.Types.Object, ref: 'Reminder'}
+  timeStamp: {type: Date, default: Date.now},
+  reminder: {type: mongoose.Schema.Types.Object, ref: 'Reminder'}
 });
 
 
