@@ -40,13 +40,31 @@
 
                 </form>
 
-              <md-button class="md-icon-button md-button md-ink-ripple" ng-transclude="" ng-click="vm.removeFilter()" aria-label="close" style="padding-top: 3px;">
+              <md-button class="md-icon-button md-button md-ink-ripple" ng-show = "vm.query.filter.length > 0" ng-transclude="" ng-click="vm.removeFilter()" aria-label="close" style="padding-top: 3px;">
                 <md-icon class="material-icons">close</md-icon>
                 <div class="md-ripple-container"></div>
               </md-button>
 
            </md-input-container>
 
+           <md-input-container flex = "15" ng-hide = 'vm.switch'>
+
+             <md-select  ng-model = "vm.selectedColumns"  aria-label = "cols" placeholder = "Select Columns" class="md-primary">
+
+               <md-checkbox aria-label="Select All"
+                              ng-checked="vm.isChecked()"
+                              md-indeterminate="vm.isIndeterminate()"
+                              ng-click="vm.toggleAll()">
+                   <span ng-if="vm.isChecked()">Un-</span>Select All
+               </md-checkbox>
+               <md-list class="demo-select-all-checkboxes"  ng-value = "c" >
+                 <md-checkbox layout = "row" ng-repeat = "c in vm.columns" ng-checked = "vm.exists(c, vm.selectedColumns) " ng-click = "vm.toggle(c, vm.selectedColumns)">
+                     {{c.name}}
+                 </md-checkbox>
+
+               </md-list>
+             </md-select>
+           </md-input-container>
 
 
            <md-input-container flex = "15" ng-hide = '!vm.switch'>
@@ -67,11 +85,12 @@
                <table md-table class="md-primary md-data-table" ng-model="vm.selected" id="client-table" >
                   <thead md-head md-order="vm.query.order">
                         <tr md-row ng-show = "!vm.switch">
-                            <th md-column md-order-by="username">Clients</th>
-                            <th md-column md-order-by="pipelineStage">Pipeline</th>
-                            <th md-column md-order-by="recent"><span translate>{{vm.columns.recent}}</span></th>
-                            <th md-column md-order-by=""><span translate>lastReminder</span></th>
-                            <th md-column md-order-by=""><span translate>lastResponse</span></th>
+                            <th md-column  md-order-by="username"> Clients</th>
+                            <th md-column ng-repeat = "c in vm.selectedColumns" md-order-by="{{c.order}}">{{c.name}}</th>
+                            <!-- <th md-column md-order-by="pipelineStage">Pipeline</th>
+                            <th md-column md-order-by="recent"><span translate>Most Recent Activity</span></th>
+                            <th md-column md-order-by=""><span translate>Latest Reminder</span></th>
+                            <th md-column md-order-by=""><span translate>Latest Response</span></th> -->
                         </tr>
                         <tr md-row ng-show = "vm.switch">
                           <th md-column>Clients</th>
@@ -82,21 +101,21 @@
                       <tr  md-row md-auto-select="false" md-select="client" ng-repeat="client in vm.persons| orderBy: vm.query.order | filter:vm.query.filter  | limitTo: vm.query.limit: (vm.query.page - 1) * vm.query.limit">
 
 
-                        <td md-cell>
+                        <td md-cell class = "md-cell">
                           <img ng-src="{{client.imgUrl}}" style="border-radius: 50%; width: 50px; margin: 10px;" >
                           {{client.username}}
                         </td>
-                        <td md-cell>
+                        <td md-cell  class = "md-cell">
                           {{client.pipelineStage}}
                         </td>
-                        <td md-cell>
+                        <td md-cell  class = "md-cell">
                           <img ng-src="{{client.reminderStatus}}" style="border-radius: 50%; width: 15px; margin: 10px;" >
                           {{client.reminderQuestion}}
                         </td>
-                        <td md-cell>
+                        <td md-cell  class = "md-cell">
                           {{client.testReminder}}
                         </td>
-                        <td md-cell ng-repeat = "r in client.testResponses">
+                        <td md-cell  class = "md-cell" ng-repeat = "r in client.testResponses">
                           {{r}}
                         </td>
 
@@ -107,16 +126,22 @@
                       <tr  md-row md-auto-select="false" md-select="client" ng-repeat="client in vm.user.clients| orderBy: vm.query.order | filter:vm.query.filter  | limitTo: vm.query.limit: (vm.query.page - 1) * vm.query.limit">
 
 
-                        <td md-cell >
+                        <td md-cell  class = "md-cell">
                           <img ng-src="{{client.imgUrl}}" style="border-radius: 50%; width: 50px; margin: 10px;" >
+
                           {{client.firstName + " " + client.lastName}}
                         </td>
 
-                        <td md-cell>
-                          {{client.pipelineStage}}
+                        <td md-cell  class = "md-cell" >
+                          <md-select ng-model = "vm.selectedPipeLine" ng-blur = "vm.addPipelineStage()"  placeholder = "{{client.pipelineStage}}">
+                            <md-option ng-repeat = "p in vm.pipelineOptions" ng-value = "p.type">
+                              <!-- change to be for selected user. -->
+                            {{p.type}}
+                            </md-option>
+                          </md-select>
                         </td>
 
-                        <td md-cell>
+                        <td md-cell  class = "md-cell">
                           <most-recent selected="client"></most-recent>
                         </td>
                       </tr>

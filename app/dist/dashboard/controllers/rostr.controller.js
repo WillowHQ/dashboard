@@ -79,22 +79,38 @@
 
 
 
-      vm.possibleColumns = {};
+      vm.possibleColumns = [];
       //vm.contents = contents(vm.clients);
       vm.selected = [];
 
       vm.testResponses = ['Good', 'nice']
 
 
-      vm.columns = {
-           avatar: '',
-           name: 'Name',
-           status: 'Status',
-           recent: 'Most Recent Activity'
-          //  id: 'TABLE.COLUMNS.ID'
-       };
+      vm.columns = [
+
+          {
+            name: "Pipeline",
+            order: "pipelineStage"
+          },
+          {
+            name: "Most Recent Activity",
+            order: ""
+          },
+          {
+            name: "Latest Reminder",
+            order: ""
+          },
+          {
+            name: "Latest Response",
+            order: ""
+          }
+       ];
 
 
+      vm.selectedColumns = [
+
+
+      ];
 
       vm.query = {
         filter: '',
@@ -102,6 +118,13 @@
         limit: 15,
         page: 1
       }
+
+      vm.pipelineOptions = [{type: "lead"}, {type: "trail"}, {type: "active-client"}, {type: "previous-client"},{type: "archived"},{type: "NA"} ];
+
+      vm.addPipelineStage = function () {
+        console.log("add pipeline to backend");
+      }
+
 
       vm.removeFilter = function () {
         console.log(vm.query);
@@ -112,6 +135,36 @@
         //  }
       };
 
+      vm.toggle = function (item, list) {
+          var idx = list.indexOf(item);
+          if (idx > -1)
+              list.splice(idx, 1);
+          else
+              list.push(item);
+      };
+      ;
+      vm.exists = function (item, list) {
+          return list.indexOf(item) > -1;
+      };
+      ;
+      vm.toggleAll = function () {
+          if (this.selectedColumns.length === vm.columns.length) {
+            this.selectedColumns = [];
+          }
+          else if (this.selectedColumns.length === 0 || this.selectedColumns.length > 0) {
+            this.selectedColumns = vm.columns.slice(0);
+          }
+      };
+      ;
+      vm.isChecked = function () {
+          return this.selectedColumns.length === vm.columns.length;
+      };
+      ;
+      vm.isIndeterminate = function () {
+          return (this.selectedColumns.length  !== 0 &&
+              this.selectedColumns.length  !== vm.columns.length);
+      };
+      ;
 
 
       // $scope.$watch('vm.query.filter', function (newValue, oldValue) {
