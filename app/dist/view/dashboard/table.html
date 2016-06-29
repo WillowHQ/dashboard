@@ -85,8 +85,10 @@
                <table md-table class="md-primary md-data-table" ng-model="vm.selected" id="client-table" >
                   <thead md-head md-order="vm.query.order">
                         <tr md-row ng-show = "!vm.switch">
+                            <!-- <th md-column> Activity Level </th> -->
                             <th md-column  md-order-by="username"> Clients</th>
                             <th md-column ng-repeat = "c in vm.selectedColumns" md-order-by="{{c.order}}">{{c.name}}</th>
+                            <th md-column> Create a Note </th>
                             <!-- <th md-column md-order-by="pipelineStage">Pipeline</th>
                             <th md-column md-order-by="recent"><span translate>Most Recent Activity</span></th>
                             <th md-column md-order-by=""><span translate>Latest Reminder</span></th>
@@ -99,7 +101,6 @@
                   </thead>
                     <tbody md-body ng-show = "vm.switch">
                       <tr  md-row md-auto-select="false" md-select="client" ng-repeat="client in vm.persons| orderBy: vm.query.order | filter:vm.query.filter  | limitTo: vm.query.limit: (vm.query.page - 1) * vm.query.limit">
-
 
                         <td md-cell class = "md-cell">
                           <img ng-src="{{client.imgUrl}}" style="border-radius: 50%; width: 50px; margin: 10px;" >
@@ -127,13 +128,15 @@
 
 
                         <td md-cell  class = "md-cell">
+                          <!--  Need to change/create when i can get the backend -->
+                          <img ng-src="{{client.activityLevel}}" style="border-radius: 50%; width: 15px; margin: 10px;" >
                           <img ng-src="{{client.imgUrl}}" style="border-radius: 50%; width: 50px; margin: 10px;" >
 
                           {{client.firstName + " " + client.lastName}}
                         </td>
 
                         <td md-cell  class = "md-cell" >
-                          <md-select ng-model = "vm.selectedPipeLine" ng-blur = "vm.addPipelineStage()"  placeholder = "{{client.pipelineStage}}">
+                          <md-select ng-model = "client.tempPipelineStage" ng-blur = "vm.addPipelineStage(client)"  placeholder = "{{client.pipelineStage}}">
                             <md-option ng-repeat = "p in vm.pipelineOptions" ng-value = "p.type">
                               <!-- change to be for selected user. -->
                             {{p.type}}
@@ -144,6 +147,12 @@
                         <td md-cell  class = "md-cell">
                           <most-recent selected="client"></most-recent>
                         </td>
+
+                        <td md-cell ng-click="vm.addNote($event, client)" ng-class="{'md-placeholder': !client.comment}">
+                          {{dessert.comment || 'Add a Note'}}
+                        </td>
+
+
                       </tr>
 
                     </tbody>

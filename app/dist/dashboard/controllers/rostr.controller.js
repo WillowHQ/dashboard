@@ -5,12 +5,16 @@
     .module('dashboard')
     .controller('ClientOverviewController', ClientOverviewController);
 
-    ClientOverviewController.$inject = ['user', '$scope'];
+    ClientOverviewController.$inject = ['user', '$scope', '$mdToast', '$http', '$mdEditDialog'];
 
-    function ClientOverviewController(user, $scope) {
+    function ClientOverviewController(user, $scope, $mdToast, $http, $mdEditDialog) {
       var vm = this;
       vm.bookmark;
       vm.user = user.current;
+      vm.$mdToast = $mdToast;
+      vm.$http = $http;
+
+
       //vm.clients2 = vm.user.clients;
 
       //vm.clients2[0].username = "Jon Snow";
@@ -85,32 +89,33 @@
 
       vm.testResponses = ['Good', 'nice']
 
-
+      //Selecting the columns in the md-select
       vm.columns = [
 
           {
+            index: "0",
             name: "Pipeline",
             order: "pipelineStage"
           },
           {
+            index: "1",
             name: "Most Recent Activity",
             order: ""
           },
           {
+            index: "2",
             name: "Latest Reminder",
             order: ""
           },
           {
+            index: "3",
             name: "Latest Response",
             order: ""
           }
        ];
 
-
-      vm.selectedColumns = [
-
-
-      ];
+      //Selected the columns in the md-select
+      vm.selectedColumns = [];
 
       vm.query = {
         filter: '',
@@ -119,22 +124,51 @@
         page: 1
       }
 
+      //Used for the pipeline
       vm.pipelineOptions = [{type: "lead"}, {type: "trail"}, {type: "active-client"}, {type: "previous-client"},{type: "archived"},{type: "NA"} ];
 
-      vm.addPipelineStage = function () {
+      //Updating the pipeline
+      vm.addPipelineStage = function (client) {
         console.log("add pipeline to backend");
-      }
+        console.log(client);
+        console.log($mdToast);
+        if(!client.tempPipelineStage){
+          console.log('No client');
+        }
+        else
+        {
+          var pipelineStage = {
+            body: client.tempPipelineStage,
+            author: vm.user.id,
+            assignee: client.id
+          }
 
 
+          console.log(pipelineStage);
+
+          //Will neeed to change when we update the backend. Need two post one to creat and another adding to the user.
+          vm.$http.post('/api/pipelineStage/create/' + pipelineStage.assignee, pipelineStage).then(function successCallback(response) {
+             console.log(response.data);
+             console.log();
+             console.log('HERE');
+             //Does not update on front line on switch back but backend is good
+             client.pipelineStage = response.data.body;
+          });
+          console.log(vm.user);
+          this.openToast("Pipeline Stage Updated");
+
+        }
+      };
+
+      //search engine filter
       vm.removeFilter = function () {
         console.log(vm.query);
          vm.query.filter = '';
-
-        //  if(vm.filter.form.$dirty) {
-        //    vm.filter.form.$setPristine();
-        //  }
       };
 
+
+
+      //For the md-select and checkboxes all 5 methods
       vm.toggle = function (item, list) {
           var idx = list.indexOf(item);
           if (idx > -1)
@@ -142,11 +176,11 @@
           else
               list.push(item);
       };
-      ;
+
       vm.exists = function (item, list) {
           return list.indexOf(item) > -1;
       };
-      ;
+
       vm.toggleAll = function () {
           if (this.selectedColumns.length === vm.columns.length) {
             this.selectedColumns = [];
@@ -155,7 +189,7 @@
             this.selectedColumns = vm.columns.slice(0);
           }
       };
-      ;
+
       vm.isChecked = function () {
           return this.selectedColumns.length === vm.columns.length;
       };
@@ -164,7 +198,7 @@
           return (this.selectedColumns.length  !== 0 &&
               this.selectedColumns.length  !== vm.columns.length);
       };
-      ;
+
 
 
       // $scope.$watch('vm.query.filter', function (newValue, oldValue) {
@@ -184,6 +218,77 @@
       // });
 
       // Get list of clients that match query
+
+  //   vm.addNote = function (event, client) {
+  //      // in case autoselect is enabled
+  //   console.log("here lol");
+  //   var editDialog = {
+  //     modelValue:client.comment,
+  //     placeholder: 'Add a comment',
+  //     save: function (input) {
+  //       if(input.$modelValue === 'Donald Trump') {
+  //         return $q.reject();
+  //       }
+  //       if(input.$modelValue === 'Bernie Sanders') {
+  //         return dessert.comment = 'FEEL THE BERN!'
+  //       }
+  //       dessert.comment = input.$modelValue;
+  //     },
+  //     targetEvent: event,
+  //     title: 'Add a comment',
+  //     validators: {
+  //       'md-maxlength': 30
+  //     }
+  //   };
+  // };
+
+    vm.addNote = function (event, dessert) {
+     // in case autoselect is enabled
+
+      var editDialog = {
+        modelValue: dessert.comment,
+        placeholder: 'Add a comment',
+        save: function (input) {
+          if(input.$modelValue === 'Donald Trump') {
+            return $q.reject();
+          }
+          if(input.$modelValue === 'Bernie Sanders') {
+            return dessert.comment = 'FEEL THE BERN!'
+          }
+          dessert.comment = input.$modelValue;
+        },
+        targetEvent: event,
+        title: 'Add a Note',
+        validators: {
+          'md-maxlength': 160
+        }
+      };
+
+      var promise = $mdEditDialog.small(editDialog);
+
+      promise.then(function (ctrl) {
+        var input = ctrl.getInput();
+
+        input.$viewChangeListeners.push(function () {
+          input.$setValidity('test', input.$modelValue !== 'test');
+        });
+      });
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       function getClients() {
 
       }
