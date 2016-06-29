@@ -12,8 +12,8 @@ var app;
                 this.author = this.userService.get();
                 if (this.author.role == "coach") {
                     this.author = this.author.id;
-                    this.assignee = this.userService.selectedUser;
-                    this.assignee = this.assignee._id;
+                    //this.assignee = this.userService.selectedUser;
+                    //this.assignee = this.assignee._id;
                 }
                 else if (this.author.role == "user") {
                     this.author = this.author.id;

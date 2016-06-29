@@ -2,3 +2,4 @@ node_modules/
 app/bower_components/
 botfiles/*
 s/
+server/config/env/development.js

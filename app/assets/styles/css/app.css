@@ -12,7 +12,16 @@ md-dialog.SurveyBuilder{
   width: 450px;
 }
 
+.datatableback{
+  height: 1000px;
+}
 
+
+
+.datatable{
+
+  overflow: auto;
+}
 
 
 textarea.bioBox {

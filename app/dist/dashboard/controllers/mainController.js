@@ -55,15 +55,7 @@ var userSelected;
                 }
                 else if (this.user.role == "coach") {
                     this.clients = this.user.clients;
-                    self.selected = this.clients[0];
-                    if (typeof self.selected !== 'undefined') {
-                      for (var i = 0; i < self.selected.surveys.length; i++) {
-                        // A survey is a reminder if it has only one question
-                        if (self.selected.surveys[i].questions.length == 1) {
-                          self.selected.reminders.push(self.selected.surveys[i]);
-                        }
-                      }
-                    }
+                    //self.selected = this.clients[0];
                 }
                 self.userService.selectedUser = self.selected;
                 userSelected = self.userService.selectedUser;
@@ -128,6 +120,28 @@ var userSelected;
                 }
 
                 // Get the data into a form the backend likes
+                /*
+                 * This loop serves two purposes: transform the questions object
+                 * into a questions array, and transform some of the properties
+                 * into the correct form for the backend.
+                 */
+                var questions = [];
+                for (var key in this.questions) {
+                  // Rename the 'questionHeader' property to 'header'
+                  if (this.questions[key].hasOwnProperty('questionHeader')) {
+                    this.questions[key].header = this.questions[key].questionHeader;
+                    delete this.questions[key].questionHeader;
+                  }
+
+                  // Turn the 'type' property into the correct form for the backend
+                  if (this.questions[key].type == 'Yes/No') this.questions[key].type = 'YESNO';
+                  if (this.questions[key].type == 'Written Answer') this.questions[key].type = 'WRITTEN';
+                  if (this.questions[key].type == 'Scale from 1 to 5') this.questions[key].type = 'SCALE';
+
+                  // Add the current question to the questions array
+                  questions.push(this.questions[key]);
+                }
+
                 var surveyTemplate = {
                   title: this.surveyTitle,
                   questions : questions,
@@ -294,17 +308,37 @@ var userSelected;
                     minute: self.selectedSurvey.timeOfDay.getMinutes()
                   };
 
-                  // For all of the users that were assigned a survey
+                  //this is making me nervous
                   for (var i = 0; i < _this.selectedSurvey.selectedUsers.length; i++) {
+
+                    var surveyUserAssign = {
+                      repeat: updatedSurvey.repeat,
+                      days: updatedSurvey.days,
+                      hour: updatedSurvey.hour,
+                      minute: updatedSurvey.minute,
+                      userId: _this.selectedSurvey.selectedUsers[i],
+                      surveyTemplateId: _this.selectedSurvey._id,
+                      type: "survey"
+                    }
                     // POST the selectedSurvey to the user
-                    self.$http.post('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/', _this.selectedSurvey).then(function (response) {
-                      // PUT the updatedSurvey to the user
-                      self.$http.put('/api/users/' + _this.selectedSurvey.selectedUsers[i] + '/surveys/' + _this.selectedSurvey._id, updatedSurvey).then(function (response) {
-                        console.log(response.data);
-                      });
+
+                    console.log("survey if " + surveyUserAssign.surveyTemplateId);
+                    console.log("user id" + surveyUserAssign.userId);
+
+                    //first make a object that can be turned into a object on the back end
+
+                    self.$http.post('/api/assignment/create' , surveyUserAssign).then(function (response){
+                      console.log("this sungun worked" + response.data);
                     });
-                  }
-                });
+                  }});
+
+
+
+
+
+
+
+
               };
 
               MainController.prototype.previewSurvey = function ($event) {
@@ -501,7 +535,7 @@ var userSelected;
                     _this.$http.post('/api/user/create', user).then(function (__response) {
                         _this.$http.post('/api/coach/newuser/' + this.user.id + '?' + __response.data.id, user).then(function (client) {
                           console.log("Here fb");
-                          self.user.clients.push(response.data);
+                          self.user.clients.push(__response.data);
                         });
                     });
                   });
@@ -627,6 +661,7 @@ var userSelected;
                   self.openToast("Note added");
               }, function () {
                   console.log('You cancelled the dialog.');
+
               });
             };
 

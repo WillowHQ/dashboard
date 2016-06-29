@@ -77,7 +77,7 @@ exports.getClientProfile = function (req, res) {
 exports.sendEmail = function (req,res){
   console.log("Here");
 
-  /*async.waterfall([
+  async.waterfall([
     function(done) {
       crypto.randomBytes(20, function(err, buf) {
         var token = buf.toString('hex');
@@ -137,7 +137,6 @@ exports.sendEmail = function (req,res){
       if (err) return next(err);
       //res.send(502);
     });
-*/
   res.send({});
 }
 

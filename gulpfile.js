@@ -3,6 +3,7 @@
 
 var gulp = require('gulp');
 var nodemon = require('gulp-nodemon');
+//var gulpNgConfig = require('gulp-ng-config');
 var sass = require('gulp-sass');
     browserSync = require('browser-sync');
     reload = browserSync.reload;
@@ -26,7 +27,7 @@ var botOptions = {
 };
 
 var bot = new Pandorabot(botOptions);
-
+//adding comment to trigger update
 var paths = {
   angular: ['app/dist/**/*.js'],
   css: ['app/assets/styles/css/**/*.css'],

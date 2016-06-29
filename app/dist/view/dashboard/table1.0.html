@@ -1,0 +1,199 @@
+<!-- <md-autocomplete
+    class="margin-bottom-20"
+    ng-disabled="vm.isDisabled"
+    md-no-cache="vm.noCache"
+    md-selected-item="selectedItem"
+    md-search-text-change="vm.searchTextChange(vm.searchText)"
+    md-search-text="vm.searchText"
+    md-selected-item-change="vm.selectedItemChange(item)"
+    md-items="item in vm.querySearch(vm.searchText)"
+    md-item-text="item.display"
+    md-min-length="0"
+    placeholder="What is your favorite US state?">
+    <span md-highlight-text="vm.searchText" md-highlight-flags="^i">{{item.display}}</span>
+</md-autocomplete> -->
+
+<md-content id="client-overview-container" class="dashboard-container overlay-5 padded-content-page" layout="row"  >
+  <div layout="column" layout-sm="column" layout-margin flex >
+     <md-card class = "datatableback">
+       <!-- Filter Selection -->
+       <md-toolbar class="md-table-toolbar" style="background-color: white;" ng-hide="vm.filter.show">
+         <div class="md-toolbar-tools">
+          <h2><span style="color: #444; margin-left: 10px;">Rostr</span></h2>
+          <span flex></span>
+
+
+          <!-- adding selector so we can pick the columns we want -->
+
+          <md-input-container>
+            <label>Select Survey</label>
+            <md-select  ng-model = "vm.selectedDataSurvey"  aria-label = "UDOP" >
+              <md-option ng-repeat = "s in vm.user.surveyTemplates" ng-value = "s">
+                {{s.title}}
+              </md-option>
+            </md-select>
+          </md-input-container>
+
+          <!-- <md-select  ng-model = "vm.selectedColumns"  aria-label = "UDOP" placeholder = "Pick Columns">
+
+            <md-checkbox aria-label="Select All"
+                           ng-checked="vm.isChecked()"
+                           md-indeterminate="vm.isIndeterminate()"
+                           ng-click="vm.toggleAll()">
+                <span ng-if="vm.isChecked()">Un-</span>Select All
+            </md-checkbox>
+            <md-list class="demo-select-all-checkboxes"  ng-value = "c" >
+              <md-checkbox layout = "row"  ng-repeat = "c in vm.columns" ng-checked = "vm.exists(c, vm.selectSurveyUser) " ng-click = "vm.toggle(c, vm.selectSurveyUser)">
+                  {{c.firstName  + " " + c.lastName}}
+              </md-checkbox>
+
+            </md-list>
+          </md-select>
+ -->
+
+         </div>
+       </md-toolbar>
+       <!-- Search -->
+       <md-toolbar class="md-table-toolbar" style="background-color: white;" ng-show="vm.filter.show || options.rowSelection || !selected.length">
+        <div class="md-toolbar-tools">
+          <md-icon class="material-icons">search</md-icon>
+          <form flex="" name="filter.form" class="ng-valid flex ng-valid-parse ng-pristine">
+
+            <input style="padding-left: 5px;" type="text" ng-model="vm.query.filter" placeholder="search" class="ng-valid ng-touched ng-valid-parse ng-pristine" aria-invalid="false">
+
+          </form>
+
+<!--
+          <form flex="" name="filter.form" class="ng-valid flex ng-valid-parse ng-pristine">
+            <md-select style="padding-left: 5px;" type="text" ng-model="vm.query.filter" placeholder="SelectSurvey" class="ng-valid ng-touched ng-valid-parse ng-pristine" aria-invalid="false">
+          </form> -->
+
+          <md-button class="md-icon-button md-button md-ink-ripple" ng-transclude="" ng-click="vm.removeFilter()" aria-label="close">
+            <md-icon class="material-icons">close</md-icon>
+            <div class="md-ripple-container"></div>
+          </md-button>
+        </div>
+       </md-toolbar>
+       <md-toolbar class="md-table-toolbar" ng-if="vm.selected.length > 0" style="background-color: white;">
+         <!-- <md-chips ng-model="vm.selected" style="padding-right: 16px; padding-left: 13px;">
+          <md-chip-template>
+            <strong>{{$chip.username}}</strong>
+          </md-chip-template>
+        </md-chips> -->
+        <md-contact-chips
+          ng-model="vm.selected"
+          md-contacts="vm.clients"
+          md-contact-name="username"
+          md-highlight-flags="i"
+          placeholder="To"
+          style="padding-right: 16px; padding-left: 13px;">
+        </md-contact-chips>
+       </md-toolbar>
+      <md-card-content style="padding-top: 0px; background-color: white">
+        <md-table-container class = "datatable" >
+               <table md-table class="md-primary md-data-table" multiple md-row-select ng-model="vm.selected" id="client-table" >
+                  <thead md-head md-order="vm.query.order">
+                        <tr md-row>
+                            <th md-column>Clients</th>
+                            <th md-column>Pipeline</th>
+                            <th md-column>Reminder</th>
+                            <th md-column>Reminder Response</th>
+                            <th md-column>Info Survey - Title </th>
+                            <th md-column>Info Survey - Weapon </th>
+                            <th md-column>Info Survey - Home </th>
+
+                            <!-- <th md-column  ng-repeat = "question in vm.selectedDataSurvey.questions"> {{question.questionHeader}}</th> -->
+
+
+
+                            <!--
+                            {vm.user.surveytemple[0].questions}
+                            <th md-column md-order-by="username"><span translate>{{vm.columns.name}}</span></th>
+                              <th md-column md-order-by="pipelineStage"><span translate>Stage</span></th>
+                              <th md-column md-order-by="reminders"><span translate>lastMessage</span></th>
+                              <th md-column md-order-by=""><span translate>lastReminder</span></th>
+                              <th md-column md-order-by="survey"><span translate>lastResponse</span></th>
+                              <th md-column md-order-by="survey"><span translate>surveyTitle</span></th>
+                            <th md-column md-order-by="Survey"><span translate>surveyStatus</span></th>
+                            <th md-column md-order-by="recent"><span translate>{{vm.columns.recent}}</span></th>
+                            <th md-column md-order-by=""><span translate>Status</span></th>
+                            <th md-column md-order-by="survey"><span translate>Survey</span></th>
+                            <th md-column md-order-by="willingnes"><span translate> willingness</span></th>
+                          <th md-column md-order-by="status"><span translate>{{vm.columns.status}}</span></th>
+                          <th md-column md-order-by="recent"><span translate>{{vm.columns.recent}}</span></th>
+                        -->
+                            <!-- <th md-column md-numberic md-order-by="id"><span translate>{{vm.columns.id}}</span></th> -->
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                      <tr  md-row md-auto-select="false" md-select="client" ng-repeat="client in vm.persons| orderBy: vm.query.order | filter:vm.query.filter  | limitTo: vm.query.limit: (vm.query.page - 1) * vm.query.limit">
+
+
+                        <td md-cell>
+                          <img ng-src="{{client.imgUrl}}" style="border-radius: 50%; width: 50px; margin: 10px;" >
+                          {{client.username}}
+                        </td>
+                        <td md-cell>
+                          {{client.pipelineStage}}
+                        </td>
+                        <td md-cell>
+                          <img ng-src="{{client.reminderStatus}}" style="border-radius: 50%; width: 15px; margin: 10px;" >
+                          {{client.reminderQuestion}}
+                        </td>
+                        <td md-cell>
+                          {{client.testReminder}}
+                        </td>
+                        <td md-cell ng-repeat = "r in client.testResponses">
+                          {{r}}
+                        </td>
+
+
+                      </tr>
+
+                    </tbody>
+                    <!-- <tbody md-body >
+                        <tr md-row md-auto-select="false" md-select="client" ng-repeat="client in vm.clients | orderBy: vm.query.order | filter:vm.query.filter  | limitTo: vm.query.limit: (vm.query.page - 1) * vm.query.limit">
+
+                            <td md-cell>
+                              <img ng-src="{{client.imgUrl}}" style="border-radius: 50%; width: 50px; margin: 10px;" >
+                              {{client.username}}
+                            </td>
+
+                            <td md-cell>
+
+                              {{client.pipelineStage}}
+                            </td>
+
+                            <td md-cell ng-repeat = "response in vm.testResponses">
+                              {{response}}
+                            </td>
+
+                            <td md-cell>
+                              {{client.reminders[client.reminders.length-1].title}}
+                            </td>
+                            <td md-cell>
+                              {{client.reminders[client.reminders.length-1].}}
+                            </td>
+                            <td md-cell>
+                              {{client.surveyTemplates[client.surveyTemplates.length-1].title}}
+                            </td>
+
+
+
+                            <td md-cell>
+                              <status selected="client"></status>
+                            </td>
+                            <td md-cell>
+                              <most-recent selected="client"></most-recent>
+                            </td>
+
+                        </tr>
+
+                    </tbody> -->
+               </table>
+        </md-table-container>
+        <md-table-pagination md-limit="vm.query.limit" md-limit-options="[5, 10, 15]" md-page="vm.query.page" md-total="{{vm.clients.length}}" md-page-select></md-table-pagination>
+      </md-card-content>
+    </md-card>
+  </div>
+</md-content>

@@ -21,8 +21,6 @@ var app = express();
 // Configure the Passport middleware
 var passport = passport();
 
-
-
 // Use the Express application instance to listen to the '9812' port
 app.listen(12557);
 

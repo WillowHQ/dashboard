@@ -7,6 +7,8 @@ module.exports = {
 	//db: 'mongodb://thom:letmein1@ds011251.mlab.com:11251/fitpath',
 	//db: 'mongodb://shane:letmein1@ds013024.mlab.com:13024/prod',
   db: 'mongodb://shane:letmein1@localhost:27017/development',
+  // If I push this code to dev and the db is still localhost I owe Josh + Thom $5 each - Shane
+	//db: 'mongodb://thom:letmein1@ds061335.mlab.com:61335/dev',
   sessionSecret: 'developmentSessionSecret',
   phoneNumbers: {
     messages: '+12898062194',
