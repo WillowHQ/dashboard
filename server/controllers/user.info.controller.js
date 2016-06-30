@@ -91,94 +91,94 @@ exports.create = function(req, res) {
       console.log("User controller hit");
       console.log(user._id);
 
-      // Generate all current surveys for this user
-      SurveyTemplate.find({}, function (err, surveys) {
-        _.each(surveys, function (survey) {
-          var xml = builder.create('aiml').att('version', '2.0');
-          xml.ele('category')
-            .ele('pattern', 'XINIT ' + survey._id + user._id)
-            .up()
-            .ele('template', 'Hi! Here\'s a survey your coach wanted me to send you.\n' + survey.questions[0].question);
-          //Find out how the bot normalizes the first question
-          var normalizedQuestion;
-          bot.talk({extra: true, trace: true, input: 'XNORM ' + survey.questions[0].question}, function (err, res) {
-            normalizedQuestion = res.responses.join(' ');
-
-            User.findByIdAndUpdate(
-              user._id,
-              {pandoraBotSaid: normalizedQuestion},
-              {new: true},
-              function (err, user) {
-                console.log('User updated');
-                console.log(user);
-            });
-
-            //TODO: fix if IE support becomes an issue
-            var total = survey.questions.length - 1;
-            var count = 0;
-            var xmlString = '';
-            for (var key = 0; key < survey.questions.length; key++) {
-              (function (question) {
-                if (key != 0) {
-                  bot.talk({extra: true, trace: true, input: 'XNORM ' + question}, function (err, res) {
-                    if (!err) {
-                      xml.ele('category')
-                        .ele('pattern', user._id + ' *')
-                        .up()
-                        .ele('that', normalizedQuestion)
-                        .up()
-                        .ele('template', question)
-                          .ele('think')
-                            .ele('set')
-                              .att('name', survey._id + user._id + count)
-                              .ele('star');
-                      normalizedQuestion = res.responses.join(' ');
-                    }
-                    count++;
-                    if (count > total - 1) {
-                      (function () {
-                        xml.ele('category')
-                          .ele('pattern', user._id + ' *')
-                          .up()
-                          .ele('that', normalizedQuestion)
-                          .up()
-                          // Bot signals end of conversation by sending id of survey and user id
-                          .ele('template', 'Thanks for answering my questions! Enjoy the rest of your day. ' + survey._id + user._id)
-                            .ele('think')
-                              .ele('set')
-                                .att('name', survey._id + user._id + count)
-                                .ele('star');
-                        xmlString = xml.end({pretty: true});
-                        console.log();
-                        console.log(xmlString);
-                        fs.writeFile('botfiles/' + survey._id + user._id + '.aiml', xmlString, function (err) {
-                          if (err) {
-                            console.log(err);
-                          }
-                          console.log('The file was saved.');
-                          bot.upload('botfiles/' + survey._id + user._id + '.aiml', function (err, res) {
-                            if (!err) {
-                              console.log(res);
-                              bot.compile(function (err, res) {
-                                if (!err) {
-                                  console.log('Bot ready to use.');
-                                  console.log(res);
-                                }
-                              });
-                            }
-                          });
-                        });
-                      }());
-                    }
-                  });
-                }
-              })(survey.questions[key].question);
-            }
-          });
-        });
-      });
-
-      User.findByIdAndUpdate(user.coaches[0],
+      // // Generate all current surveys for this user
+      // SurveyTemplate.find({}, function (err, surveys) {
+      //   _.each(surveys, function (survey) {
+      //     var xml = builder.create('aiml').att('version', '2.0');
+      //     xml.ele('category')
+      //       .ele('pattern', 'XINIT ' + survey._id + user._id)
+      //       .up()
+      //       .ele('template', 'Hi! Here\'s a survey your coach wanted me to send you.\n' + survey.questions[0].question);
+      //     //Find out how the bot normalizes the first question
+      //     var normalizedQuestion;
+      //     bot.talk({extra: true, trace: true, input: 'XNORM ' + survey.questions[0].question}, function (err, res) {
+      //       normalizedQuestion = res.responses.join(' ');
+      //
+      //       User.findByIdAndUpdate(
+      //         user._id,
+      //         {pandoraBotSaid: normalizedQuestion},
+      //         {new: true},
+      //         function (err, user) {
+      //           console.log('User updated');
+      //           console.log(user);
+      //       });
+      //
+      //       //TODO: fix if IE support becomes an issue
+      //       var total = survey.questions.length - 1;
+      //       var count = 0;
+      //       var xmlString = '';
+      //       for (var key = 0; key < survey.questions.length; key++) {
+      //         (function (question) {
+      //           if (key != 0) {
+      //             bot.talk({extra: true, trace: true, input: 'XNORM ' + question}, function (err, res) {
+      //               if (!err) {
+      //                 xml.ele('category')
+      //                   .ele('pattern', user._id + ' *')
+      //                   .up()
+      //                   .ele('that', normalizedQuestion)
+      //                   .up()
+      //                   .ele('template', question)
+      //                     .ele('think')
+      //                       .ele('set')
+      //                         .att('name', survey._id + user._id + count)
+      //                         .ele('star');
+      //                 normalizedQuestion = res.responses.join(' ');
+      //               }
+      //               count++;
+      //               if (count > total - 1) {
+      //                 (function () {
+      //                   xml.ele('category')
+      //                     .ele('pattern', user._id + ' *')
+      //                     .up()
+      //                     .ele('that', normalizedQuestion)
+      //                     .up()
+      //                     // Bot signals end of conversation by sending id of survey and user id
+      //                     .ele('template', 'Thanks for answering my questions! Enjoy the rest of your day. ' + survey._id + user._id)
+      //                       .ele('think')
+      //                         .ele('set')
+      //                           .att('name', survey._id + user._id + count)
+      //                           .ele('star');
+      //                   xmlString = xml.end({pretty: true});
+      //                   console.log();
+      //                   console.log(xmlString);
+      //                   fs.writeFile('botfiles/' + survey._id + user._id + '.aiml', xmlString, function (err) {
+      //                     if (err) {
+      //                       console.log(err);
+      //                     }
+      //                     console.log('The file was saved.');
+      //                     bot.upload('botfiles/' + survey._id + user._id + '.aiml', function (err, res) {
+      //                       if (!err) {
+      //                         console.log(res);
+      //                         bot.compile(function (err, res) {
+      //                           if (!err) {
+      //                             console.log('Bot ready to use.');
+      //                             console.log(res);
+      //                           }
+      //                         });
+      //                       }
+      //                     });
+      //                   });
+      //                 }());
+      //               }
+      //             });
+      //           }
+      //         })(survey.questions[key].question);
+      //       }
+      //     });
+      //   });
+      // });
+      //
+        User.findByIdAndUpdate(user.coaches[0],
         {$push: {"clients": user._id}},
         {safe: true},
         function(err, coach) {

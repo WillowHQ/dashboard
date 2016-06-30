@@ -73,6 +73,11 @@ var UserSchema = new Schema({
     enum: ['coach', 'user', 'admin'],
     default: 'coach'
   },
+  defaultCommsMedium:{
+    type: String,
+    enum: ['sms', 'fb', 'slack'],
+    default: 'sms'
+  },
   //look at this an actual comment :) was going to override the user role but I think I'll make a new field so I don't break anything.
   pipelineStage:{
     type: String,

@@ -23,9 +23,11 @@ var assignmentSchema = new Schema({
   //client not coach
   userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
 
-  surveyTemplateId: {type: mongoose.Schema.Types.ObjectId, ref: 'SurveyTemplate'},
+  userId: {type: mongoose.Schema.Types.Object, ref: 'User'},
 
-  reminderId: {type: mongoose.Schema.Types.ObjectId, ref: 'Reminder'}
+  surveyTemplateId: {type: mongoose.Schema.Types.Object, ref: 'SurveyTemplate'},
+
+  reminderId: {type: mongoose.Schema.Types.Object, ref: 'Reminder'}
 
 });
 

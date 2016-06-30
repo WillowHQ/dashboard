@@ -130,6 +130,9 @@ var app;
                 console.log(this.user);
                 this.user.surveyTemplates.push(response.data);
 
+                //TODO add a post here to add a survey to a coach 
+
+
 
                 console.log("reseting save!");
 

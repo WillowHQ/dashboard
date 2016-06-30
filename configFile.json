@@ -1,7 +1,7 @@
 {
   "local": {
     "EnvironmentConfig": {
-      "api": "http://localhost/"
+      "api": "http://107.170.21.178/"
     }
   },
   "production": {

@@ -9,8 +9,8 @@ module.exports = function(app) {
   app.get('/api/assignment/list', assignment.list);
   //ok we got the basic call working, now let's get only the surveys and remidners that are for right now
 
-  app.get('/api/assignment/listNow', assignment.listNow);
-  
+  app.get('/api/assignment/convosNow', assignment.convosNow);
+
   // app.post('/api/assignment/update/:id', assignment.update);
   // app.post('/api/assignment/remove/:id', assignment.delete);
 

@@ -81,7 +81,6 @@ module.exports = function() {
 	require('../routes/api/assignmentRoute.js')(app, passport);
 	require('../routes/api/responseRoute.js')(app, passport);
 
-
 	//Take it out
 	//require('../routes/triangular.routes.js')(app, passport);
 	require('../routes/api/facebook.routes.js')(app, passport);

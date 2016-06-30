@@ -1,49 +1,49 @@
 'use strict'
 
 var mongoose = require('mongoose');
-var Response = require('../../models/response.js');
-var User = require('../../models/user.js');
-var moment = require('moment');
-var Reminder = require('../../models/reminder.js');
+var User = require('../../models/user.js'),
 
+Response = require('../../models/response.js');
 
+///create a Response.js or change as Response for right now is only a string.
+
+//not used
 exports.create = function(req, res) {
-  console.log("HERE HEREH");
   var response = new Response(req.body);
-
-  response.save(function(err) {
-    if(err){
-      res.sendStatus(409);
-    }
+  console.log("response controller");
+  console.log(response);
+  response.save(function(err, response){
     // if(!err){
-    //   console.log("No Error :)";
-    //   Reminder.findByIdAndUpdate(
-    //     response.reminder._id,
-    //     {$push:{"responses": response}},
-    //     {safe: true},
-    //     function(err, reminder){
-    //       if(err){
-    //         console.log(err);
-    //         res.sendStatus(400);
-    //       }
-    //       else {
-    //         console.log(reponse pushed to reminder);
-    //         res.sendStatus(200);
-    //       }
-    //     }
-    //   );
-    //
+    //   User.findByIdAndUpate(
+    //     response.assignee,
+    //     {$push: {"response":
+    //     }}
+    //   )
     // }
-  });
-  
-  res.sendStatus(200);
+  })
+  res.send({});
 
 }
 
+
+exports.read = function(req, res) {
+
+}
+
+exports.update = function(req, res) {
+
+}
+
+exports.delete = function(req, res) {
+
+}
+
+
+
 exports.list = function(req, res) {
-  // ReminderResponse.find({}, function(err, obj) {
-  //   res.json(obj);
-  // })
-  console.log("HER DAD ");
-  res.json({name: "josh"});
+  Response.find({}, function(err, obj) {
+    res.json(obj);
+  })
+
+
 }

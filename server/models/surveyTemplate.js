@@ -22,5 +22,5 @@ var surveyTemplateSchema =  new Schema({
 
 });
 
-var surveyTemplate = mongoose.model('surveyTemplate',surveyTemplateSchema);
-module.exports = surveyTemplate;
+var SurveyTemplate = mongoose.model('SurveyTemplate',surveyTemplateSchema);
+module.exports = SurveyTemplate;
