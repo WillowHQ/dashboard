@@ -242,14 +242,15 @@
   //   };
   // };
 
-    vm.addNote = function (event, dessert) {
+    vm.addNote = function (event, client) {
      // in case autoselect is enabled
 
       var editDialog = {
-        modelValue: dessert.comment,
+        modelValue: client.tempNote,
         placeholder: 'Add a comment',
         save: function (input) {
           if(input.$modelValue === 'Donald Trump') {
+            console.log("Haha");
             return $q.reject();
           }
           if(input.$modelValue === 'Bernie Sanders') {
@@ -265,14 +266,16 @@
       };
 
       var promise = $mdEditDialog.small(editDialog);
-
+      var input;
       promise.then(function (ctrl) {
-        var input = ctrl.getInput();
-
+        input = ctrl.getInput();
+        console.log(input);
         input.$viewChangeListeners.push(function () {
-          input.$setValidity('test', input.$modelValue !== 'test');
+          console.log(input.$modelValue);
         });
+
       });
+
     };
 
 
