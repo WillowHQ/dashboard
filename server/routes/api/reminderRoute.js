@@ -1,4 +1,4 @@
-'use strict';
+/*'use strict';
 
 var reminder = require('../../controllers/api/reminderController.js');
 var userReminder = require('../../controllers/api/userReminderController.js')
@@ -17,3 +17,4 @@ module.exports = function(app) {
   //Reminder in the user
   app.post('/api/user/reminder/add', userReminder.addUserReminder);
 }
+*/

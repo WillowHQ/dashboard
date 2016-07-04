@@ -16,6 +16,8 @@ var SurveyTemplate = require('./server/models/surveyTemplate.js');
 var Message = require('./server/models/message.js');
 var Reminder = require('./server/models/reminder.js');
 var portfinder = require('portfinder');
+var ngrok = require('ngrok');
+var request = require('request');
 
 var botOptions = {
   url: 'https://aiaas.pandorabots.com',
@@ -25,7 +27,7 @@ var botOptions = {
 };
 
 var bot = new Pandorabot(botOptions);
-//adding comment to trigger update 
+//adding comment to trigger update
 var paths = {
   angular: ['app/dist/**/*.js'],
   css: ['app/assets/styles/css/**/*.css'],
@@ -34,16 +36,25 @@ var paths = {
   server: ['server/**/*.js']
 }
 
+gulp.task('ngrok', function () {
+  // TODO: break app port out to config file
+  // TODO: add code to remove url from http router
+  // TODO: only run this on dev
+  ngrok.connect(12557, function (err, url) {
+    console.log('ngrok URL is: ' + url);
+    var body = {
+      url: url
+    };
+    console.log(JSON.stringify(body));
+    request.post({url: 'https://secret-mesa-17036.herokuapp.com/urls', json: body}, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log('Successfully added ngrok URL to router');
+      }
+    });
+  });
+});
 
-// gulp.task('config', function(){
-//   return gulp.src('configFile.json')
-//         .pipe(gulpNgConfig('dashboard.config', {wrap:true}))
-//         .pipe(gulp.dest('.'))
-// });
-
-
-
-gulp.task('sass', function () {
+gulp.task('sass', ['ngrok'], function () {
   return gulp.src('app/dist/triangular/**/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest('app/dist/triangular/assets/css'));
@@ -66,7 +77,7 @@ gulp.task('nodemon' ,['sass'], function (cb) {
 gulp.task('browser-sync', ['nodemon'], function() {
 	browserSync.init(null, {
     injectChanges: true,
-		proxy: "http://107.170.21.178:12557",
+		proxy: "http://localhost:12557",
         files: ["app/**/*.*"],
         browser: 'google chrome',
         port: 7000,

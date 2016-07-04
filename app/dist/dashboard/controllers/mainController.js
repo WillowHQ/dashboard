@@ -1,9 +1,9 @@
 /// <reference path="../_all.ts" />
 var app;
+var userSelected;
 (function (app) {
     var dashboard;
     (function (dashboard) {
-        var userSelected;
         var userCoach;
         var scope;
         var MainController = (function () {
@@ -57,10 +57,10 @@ var app;
                 else if (this.user.role == "coach") {
                     this.clients = this.user.clients;
                     //self.selected = this.clients[0];
-
                 }
                 self.userService.selectedUser = self.selected;
                 userSelected = self.userService.selectedUser;
+                userSelected = self.selected;
                 scope = $scope;
                 this._ = window['_'];
 
@@ -86,17 +86,18 @@ var app;
               };
 
               MainController.prototype.saveSurvey = function($event){
+                console.log('Inside saveSurvey');
+
+                // Used to save the current value of 'this' for use inside callbacks further down
                 var _this = this;
                 var self = this;
-                console.log("hey");
                 console.log(this.questions);
+
+                // Set all of the responses to an empty array.
                 for (var key in this.questions) {
                   this.questions[key].responses = [];
                 }
-                var questions = [];
-                for (var key in this.questions) {
-                  questions.push(this.questions[key]);
-                }
+
                 /*
                  * This loop serves two purposes: transform the questions object
                  * into a questions array, and transform some of the properties
@@ -118,27 +119,61 @@ var app;
                   // Add the current question to the questions array
                   questions.push(this.questions[key]);
                 }
+
+                // Get the data into a form the backend likes
+                /*
+                 * This loop serves two purposes: transform the questions object
+                 * into a questions array, and transform some of the properties
+                 * into the correct form for the backend.
+                 */
+                var questions = [];
+                for (var key in this.questions) {
+                  // Rename the 'questionHeader' property to 'header'
+                  if (this.questions[key].hasOwnProperty('questionHeader')) {
+                    this.questions[key].header = this.questions[key].questionHeader;
+                    delete this.questions[key].questionHeader;
+                  }
+
+                  // Turn the 'type' property into the correct form for the backend
+                  if (this.questions[key].type == 'Yes/No') this.questions[key].type = 'YESNO';
+                  if (this.questions[key].type == 'Written Answer') this.questions[key].type = 'WRITTEN';
+                  if (this.questions[key].type == 'Scale from 1 to 5') this.questions[key].type = 'SCALE';
+
+                  // Add the current question to the questions array
+                  questions.push(this.questions[key]);
+                }
+
                 var surveyTemplate = {
                   title: this.surveyTitle,
                   questions : questions,
                   author : this.user._id
                 };
-                console.log(surveyTemplate);
 
-                _this.$http.post('/api/surveyTemplate/create', surveyTemplate).then(function successCallback(response) {
-                console.log(response.data);
-                console.log(this.user);
-                this.user.surveyTemplates.push(response.data);
+                /*
+                 * Surveys are stored as a 'template' in the coach.
+                 * A survey template is a survey that hasn't been assigned to a
+                 * client and that has empty days, hour, and minute fields.
+                 */
 
-                //TODO add a post here to add a survey to a coach 
+                 // Post the survey to the server
+                _this.$http.post('/api/users/' + this.user._id + '/surveys/', surveyTemplate).then(function successCallback(response) {
+                  console.log(response.data);
+                  console.log(this.user);
+
+                  // Store the survey on the client
+                  self.user.surveys.push(surveyTemplate);
+
+                //TODO add a post here to add a survey to a coach
 
 
 
-                console.log("reseting save!");
+                  console.log("reseting save!");
 
-                console.log("HEWGFRBHI");
+                  console.log("HEWGFRBHI");
 
                 });
+
+                // Reset the values of the form
                 console.log(this.questions);
                 this.questions = null;
                 this.surveyTitle = null;
@@ -267,15 +302,15 @@ var app;
                   console.log();
                   console.log(_this.selectedSurvey.selectedUsers);
                   console.log();
-                  var updatedSurvey = {
+                  console.log(self.selectedSurvey);
 
+                  // Only thing that needs changing is the time and the 'repeat' property, so:
+                  var updatedSurvey = {
                     repeat: self.selectedSurvey.repeat,
                     days: self.selectedSurvey.days,
                     hour: self.selectedSurvey.timeOfDay.getHours(),
                     minute: self.selectedSurvey.timeOfDay.getMinutes()
                   };
-
-                  // For all of the users that were assigned a survey
 
                   //this is making me nervous
                   for (var i = 0; i < _this.selectedSurvey.selectedUsers.length; i++) {
@@ -695,17 +730,23 @@ var app;
                         selected: reminder
                     }
                 }).then(function (reminder) {
-                    console.log(reminder.responses);
+                    console.log(reminder);
                     console.log(userSelected);
 
-                    // Post request, and push onto users local list of reminders
+                    // Put request, and push onto users local list of reminders
                     // this.$http.post('uri').then((response) => response.data)
                     // after promise is succesful add to
                     // reminder.assigne.reminders.push()
-                    _this.$http.post('/api/reminder/update/' + reminder._id, reminder).then(function successCallback(reminder) {
+                    _reminder = reminder;
+                    _this.$http.put('/api/users/' + self.selected._id + '/surveys/' +  reminder._id, reminder).then(function successCallback(reminder) {
                         console.log('returned junk: ' + JSON.stringify(reminder.data));
+                        for (var i = 0; i < reminder.data.surveys.length; i++) {
+                          if (reminder.data.surveys[i]._id == _reminder._id) {
+                            _reminder.questions = reminder.data.surveys[i].questions;
+                          }
+                        }
                         //  self.selected.reminders.push(response.data);
-                        if (self.updateReminder(reminder.data)) {
+                        if (self.updateReminder(_reminder)) {
                             /*if (reminder.data.parent.id) {
                                 var id = reminder.data.parent.id.slice(1, 25);
                                 self.updateReminderInSurvey(id, reminder.data);
@@ -733,7 +774,7 @@ var app;
                     console.log(reminder);
                     if (result) {
                         console.log('removing reminder id: ' + reminder._id);
-                        _this.$http.post('/api/reminder/remove/' + reminder._id, reminder)
+                        _this.$http.delete('/api/users/' + self.selected._id + '/surveys/' + reminder._id, reminder)
                             .then(function successCallback(success) {
                             if (success) {
                                 console.log(success);
@@ -749,16 +790,17 @@ var app;
                 });
             };
 
-            MainController.prototype.updateSurveyResponses = function (survey) {
-              console.log('Inside updateSurveyResponses');
-              console.log(userCoach);
-              for (var i = 0; i < userCoach.surveyTemplates.length; i++) {
-                if (survey._id == userCoach.surveyTemplates[i]._id) {
-                  userCoach.surveyTemplates[i] = survey;
-                }
+            MainController.prototype.updateUser = function (user) {
+              console.log('Inside updateUser');
+              if (userSelected._id == user._id) {
+                console.log('Should be updating user');
+                userSelected = user;
+                userSelected.surveys = user.surveys;
               }
+              console.log(userSelected);
+              console.log(self.selected);
+              console.log(this.selected);
               scope.$apply();
-              console.log(survey);
             };
 
             MainController.prototype.updateReminder = function (reminder) {
@@ -771,6 +813,7 @@ var app;
                         console.log(userSelected.reminders);
                         console.log('Look ma, an update!');
                         return true;
+                        scope.$apply();
                     }
                 }
                 return false;
@@ -884,14 +927,14 @@ var app;
             };
 
             // socket.io code ahead
-            responseSocket.on('response', function (response) {
+            /*responseSocket.on('response', function (response) {
               console.log('Server sent a reminder response');
               MainController.prototype.updateReminder(response);
-            });
+            });*/
 
-            surveySocket.on('survey', function (response) {
+            responseSocket.on('response', function (response) {
               console.log('Server sent a survey response');
-              MainController.prototype.updateSurveyResponses(response);
+              MainController.prototype.updateReminder(response);
             });
 
             messageSocket.on('message', function (message) {

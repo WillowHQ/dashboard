@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var surveyResponseSchema = require('./surveyResponse').surveyResponseSchema;
 
 var surveyQuestionSchema = new Schema({
   question: {type: String},
@@ -10,6 +11,9 @@ var surveyQuestionSchema = new Schema({
   // response: {type: mongoose.Schema.Types.Object, ref: 'SurveyResponse'}
 });
 
-var SurveyQuestion = mongoose.model('SurveyQuestion', surveyQuestionSchema);
+//var SurveyQuestion = mongoose.model('SurveyQuestion', surveyQuestionSchema);
 
-module.exports = SurveyQuestion;
+module.exports = {
+  //SurveyQuestion: SurveyQuestion,
+  surveyQuestionSchema: surveyQuestionSchema
+}
