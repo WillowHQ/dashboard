@@ -1,8 +1,8 @@
 <md-content>
-  <p ng-if="vm.user.surveyTemplates.length == 0">
+  <p ng-if="vm.selected.surveys.length == 0">
     No surveys for {{vm.selected.firstName + " " + vm.selected.lastName}}, yet.
   </p>
-  <md-card ng-repeat="survey in vm.user.surveyTemplates | orderBy: '-date':true">
+  <md-card ng-repeat="survey in vm.selected.surveys | orderBy: '-date':true">
     <md-card-header>
       <md-card-header-text>
         <div layout="row">
@@ -29,9 +29,7 @@
           <p>
             {{$index + 1}}. {{question.question}}
             <ul ng-repeat="response in question.responses">
-              <div ng-if="response.from == vm.selected._id">
-                <li>{{response.response}}</li>
-              </div>
+              <li>{{response.response}}</li>
             </ul>
           </p>
       </div>

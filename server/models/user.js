@@ -4,6 +4,7 @@
 
 // Load the module dependencies
 var mongoose = require('mongoose'),
+    uniqueValidator = require('mongoose-unique-validator'),
   	crypto = require('crypto'),
   	Schema = mongoose.Schema,
     Slack = require('./slack.js'),
@@ -12,7 +13,7 @@ var mongoose = require('mongoose'),
     note = require('./note.js'),
     message = require('./message.js'),
     reminderResponse = require('./reminderResponse.js'),
-    surveyTemplate = require('./surveyTemplate.js');
+    surveySchema = require('./survey.js').surveySchema;
 
 
 // Define a new 'UserSchema'
@@ -58,12 +59,10 @@ var UserSchema = new Schema({
     {type: mongoose.Schema.Types.Object, ref: 'Reminder'}
   ],
   surveys: [
-    {type: mongoose.Schema.Types.ObjectId, ref: 'Survey'}
+    surveySchema
   ],
 
-  surveyTemplates:[
-    {type: mongoose.Schema.Types.Object, ref: 'SurveyTemplate'}
-  ],
+  mostRecentReminder: {type: mongoose.Schema.Types.Object, ref: 'Reminder'},
 
   imgUrl: {
     type: String,
@@ -146,7 +145,7 @@ var UserSchema = new Schema({
 		// Create a default 'created' value
 		default: Date.now
 	},
-  phoneNumber: String,
+  phoneNumber: {type: String, unique: true},
   facebookId: Number,
   email: String,
   pandoraSessionId: String,
@@ -154,6 +153,8 @@ var UserSchema = new Schema({
   pandoraBotSaid: String,
   betaCode: String
 });
+
+UserSchema.plugin(uniqueValidator);
 
 // Set the 'fullname' virtual property
 // UserSchema.virtual('fullName').get(function() {
@@ -168,10 +169,6 @@ var UserSchema = new Schema({
 
 // Use a pre-save middleware to hash the password
 UserSchema.pre('save', function(next) {
-  console.log();
-  console.log('Saving user:');
-  console.log(this);
-  console.log();
 	if (this.password) {
 		this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
 		this.password = this.hashPassword(this.password);
@@ -182,10 +179,6 @@ UserSchema.pre('save', function(next) {
     this.password = this.hashPassword(this.password);
   }
   this.messenger = this.messagingService();
-  console.log();
-  console.log('User should have hashed password:');
-  console.log(this);
-  console.log();
   // Removed because will throw error if user is not coming from slack
 	next();
 });
@@ -254,6 +247,40 @@ UserSchema.statics.findByPhoneNumber = function (phoneNumber, callback) {
   console.log("Inside findByPhoneNumber, attempting to find: " + phoneNumber);
   return this.findOne({ 'phoneNumber': phoneNumber }, callback);
 }
+
+/*// Used to find the mostRecentSurvey and store it in the user object
+UserSchema.method.findMostRecentSurvey = function () {
+  // Surveys are stored in the coach, so retrieve the user's coach
+  User.findById(this.coaches[0], function (err, coach) {
+    if (!err) {
+      // Surveys are pushed onto the array from the end, so the most recent is at the end of the array
+      var length = coach.surveyTemplates.length;
+      var mostRecentSurvey = coach.surveyTemplates[length - 1];
+      this.mostRecentSurvey = mostRecentSurvey;
+      // Persists the mostRecentSurvey to the db
+      this.save();
+      return mostRecentSurvey;
+    } else {
+      console.log('An error occurred:');
+      console.log(err);
+    }
+  });
+}
+*/
+// Used to find mostRecentReminder and store it in the user object
+UserSchema.methods.findMostRecentReminder = function () {
+  // Reminders are stored in the user
+  var reminders = this.reminders;
+  // Reminders are pushed onto the array from the end, so the most recent is at the end of the array
+  var length =  reminders.length;
+  var mostRecentReminder = reminders[length - 1];
+  this.mostRecentReminder = mostRecentReminder;
+  // Persists the mostRecentReminder to the db
+  this.save();
+  return mostRecentReminder;
+}
+
+// Used to find the mostRecentReminder and store it in the user object
 
 // Find possible not used username
 // UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {

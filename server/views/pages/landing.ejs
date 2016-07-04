@@ -1,11 +1,28 @@
 <html>
   <% include ../partials/header.ejs %>
   <body>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '237058900007908',
+          xfbml      : true,
+          version    : 'v2.6'
+        });
+      };
+
+      (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+
   <% include ../partials/nav.ejs %>
   <div id="index-banner">
     <div class="section">
       <div class="container">
-
 
 
         <br><br>
@@ -13,9 +30,10 @@
         <img src = "/../assets/img/landingpage/us.png" align = "left"></img>
 
         <div class="col center" style="margin-top: 100px">
-
-          <p style = "font-size: 130%;" class="header col s12 black-text light">Heads up - If you are reading this and you haven’t been given a top-secret beta code please enter your email address here to be added to our wait-list. One of our Coaching Solutions Specialists will be in touch with you shortly.
-            If you are one of the chosen few, that has been selected to partake in our amazing beta program please enter your code here.
+          <p style = "font-size: 130%;" class="header col s12 black-text light">JKFJDKLSFJSKLS Heads up - If you are reading this and you haven’t been given a top-secret beta code please enter your email address here to be added to our wait-list. One of our Coaching Solutions Specialists will be in touch with you shortly.
+            If you are one of the chosen few, that has been selected to partake in our amazing beta program GO AWAY please enter your code here.
+            <div class="fb-send-to-messenger" messenger_app_id="237058900007908" page_id="892056954250131" color="blue" size="standard">
+          </div>
           </p>
         </div>
         <div class="row center">

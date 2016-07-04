@@ -1,22 +1,63 @@
-'use strict'
+'use strict';
+
 var mongoose = require('mongoose');
 var SurveyTemplate = require('../../models/surveyTemplate.js');
-var SurveyQuestion = require('../../models/surveyQuestion.js');
-var User = require('../../models/user.js');
-var _ = require('underscore');
-var moment = require('moment');
-var Promise = require('bluebird');
-var request = require('request');
-var twilio = require('twilio')('ACf83693e222a7ade08080159c4871c9e3', '20b36bd42a33cd249e0079a6a1e8e0dd');
-var twiml = require('twilio');
-var config = require('../../config/env/development.js');
 
+exports.create = function (req, res) {
+  var surveyTemplate = new SurveyTemplate(req.body);
 
-var builder = require('xmlbuilder');
-var fs = require('fs');
+  surveyTemplate.save(function (err, surveyTemplate) {
+    if (!err) {
+      res.json(surveyTemplate);
+    } else {
+      res.send(err);
+    }
+  })
+};
 
+exports.read = function (req, res) {
+  SurveyTemplate.findById(req.params.template_id, function (err, surveyTemplate) {
+    if (!err) {
+      res.json(surveyTemplate);
+    } else {
+      res.send(err);
+    }
+  });
+};
 
+exports.update = function (req, res) {
+  SurveyTemplate.findByIdAndUpdate(
+    req.params.template_id,
+    req.body,
+    {new: true},
+    function (err, surveyTemplate) {
+      if (!err) {
+        res.json(surveyTemplate);
+      } else {
+        res.send(err);
+      }
+  })
+};
 
+exports.delete = function (req, res) {
+  SurveyTemplate.findByIdAndRemove(req.params.template_id, function (err, surveyTemplate) {
+    if (!err) {
+      res.json(surveyTemplate);
+    } else {
+      res.send(err);
+    }
+  });
+};
+
+exports.listAll = function (req, res) {
+  SurveyTemplate.find(function (err, surveyTemplate) {
+    if (!err) {
+      res.json(surveyTemplate);
+    } else {
+      res.send(err);
+    }
+  });
+};
 
 
 exports.create = function(req, res) {

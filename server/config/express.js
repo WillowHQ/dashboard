@@ -73,10 +73,13 @@ module.exports = function() {
 	require('../routes/api/willowRoute.js')(app, passport);
 	require('../routes/api/habitRoute.js')(app, passport);
 	require('../routes/api/willow-surveyRoute.js')(app, passport);
-	require('../routes/api/reminderRoute.js')(app, passport);
-	require('../routes/api/reminderResponseRoute.js')(app, passport);
+	//require('../routes/api/reminderRoute.js')(app, passport);
+	//require('../routes/api/reminderResponseRoute.js')(app, passport);
 	require('../routes/user.info.routes.js')(app, passport);
 	require('../routes/api/surveyRoute.js')(app, passport);
+  require('../routes/api/surveyResponseRoute.js')(app, passport);
+  require('../routes/api/surveyQuestionRoute.js')(app, passport);
+  require('../routes/api/surveyTemplateRoute.js')(app, passport);
 	require('../routes/twilio.js')(app, client, passport);
 	require('../routes/api/assignmentRoute.js')(app, passport);
   require('../routes/api/responseRoute.js')(app, passport);
