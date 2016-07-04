@@ -2,11 +2,9 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var User = require('./user.js');
-var moment = require('moment');
+var surveyQuestionSchema = require('./surveyQuestion.js').surveyQuestionSchema;
 
 var surveyTemplateSchema =  new Schema({
-  //title: {type: String, required: true},
   title: {type: String, required: true},
   questions: [
 

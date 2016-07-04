@@ -1,4 +1,4 @@
-'use strict'
+/*'use strict'
 
 var mongoose = require('mongoose');
 var ReminderResponse = require('../../models/reminderResponse.js');
@@ -109,3 +109,4 @@ exports.list = function(req, res) {
     res.json(obj);
   })
 }
+*/

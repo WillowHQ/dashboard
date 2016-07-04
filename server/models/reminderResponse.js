@@ -1,4 +1,4 @@
-'use strict';
+/*'use strict';
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
@@ -23,3 +23,4 @@ reminderResponseSchema.post('findOneAndUpdate', function() {
 var ReminderResponse = mongoose.model('ReminderResponse', reminderResponseSchema);
 
 module.exports = ReminderResponse;
+*/

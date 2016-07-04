@@ -1,5 +1,30 @@
 <html>
 <body>
+  <!-- For FB 'Send to Messenger' button -->
+  <script>
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: '237058900007908',
+        xfbml: true,
+        version: 'v2.6'
+      });
+    };
+
+    (function (d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {return;}
+      js = d.createElement(s); js.id = id;
+      js.src = '//connect.facebook.net/en_US/sdk.js';
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
   <h1>Thanks for giving us access to your profile!</h1>
+  <!-- Should probably add a pic of Willow and be like 'Hi! I'm Willow, the Habit Hound. Your coach asked me to help you out. Please click the button below so I can talk to you some more. -->
+  <div class="fb-send-to-messenger"
+    messenger_app_id="237058900007908"
+    page_id="892056954250131"
+    color="blue"
+    size="standard">
+  </div>
 </body>
 </html>

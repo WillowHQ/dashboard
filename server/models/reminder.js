@@ -1,4 +1,4 @@
-'use strict';
+/*'use strict';
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
@@ -113,7 +113,7 @@ reminderSchema.method.response = function(){
   }
 
 }
-*/
+/
 // We want to decrement if the last response
 reminderSchema.methods.decrement = function() {
 
@@ -190,7 +190,7 @@ reminderSchema.methods.parseDates = function() {
 /*reminderSchema.pre('save', function(next) {
     this.parseDates();
     next();
-});*/
+});/
 
 //make a virtual that returns the most recent response on the responses array
 
@@ -226,3 +226,4 @@ hooker.hook(Reminder, 'update', {
 // console.log(formatTime("90:00"));
 
 module.exports = Reminder;
+*/

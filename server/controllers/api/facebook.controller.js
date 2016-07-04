@@ -5,8 +5,8 @@ var User = require('../../models/user.js');
 var request = require('request');
 var async = require('async');
 var crypto = require('crypto');
-var smtpTransport = require('nodemailer-smtp-transport');
 var nodemailer = require('nodemailer');
+var mandrillTransport = require('nodemailer-mandrill-transport');
 var config = require('../../config/env/development.js');
 
 exports.webhook = function(req, res) {
@@ -102,19 +102,15 @@ exports.sendEmail = function (req,res){
     },
     function(token, user, done) {
 
-      var transporter = nodemailer.createTransport(
-          smtpTransport({
-            service: 'gmail',
-            auth: {
-              user: 'fitpathmailer@gmail.com',
-              pass: 'fitpathmail'
-            }
-          })
-      );
+      var transporter = nodemailer.createTransport(mandrillTransport({
+        auth: {
+          apiKey: 'g0tWnJ18NBP7EFHirXvGUQ'
+        }
+      }));
       console.log(user.email);
       var mailOptions = {
         to: user.email, //user.username,
-        from: 'fitpathmailer@gmail.com',
+        from: 'Willow the Habit Hound <willow@fitpath.me>',
         subject: 'Fitpath.me Profile Generator',
         text:
         'You are receiving this because your coach wants to have profile information on Fitpath.me dashboard to help him/her coach you better.\n\n' +
@@ -127,7 +123,7 @@ exports.sendEmail = function (req,res){
         if(err){
           return console.log("this is an "+ err);
         }
-        console.log('Message sent: ' + info.response);
+        console.log('Message sent: ' + JSON.stringify(info));
 
         req.flash('status', 'An e-mail has been dispatched!');
         done(err, 'done');
