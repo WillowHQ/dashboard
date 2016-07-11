@@ -22,7 +22,7 @@ development
 listening for websocket connections on *:45874
 listening for websocket connections on *:37392
 /data/development/releases/1465494013/server/config
-Server running at http://107.170.21.178:12557/
+Server running at http://localhost:12557/
 events.js:160
       throw er; // Unhandled 'error' event
       ^

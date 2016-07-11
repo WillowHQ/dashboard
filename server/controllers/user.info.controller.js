@@ -13,6 +13,7 @@ var _ = require('underscore');
 var Pandorabot = require('pb-node');
 var builder = require('xmlbuilder');
 var fs = require('fs');
+var winston = require('winston');
 
 var botOptions = {
   url: 'https://aiaas.pandorabots.com',
@@ -28,28 +29,28 @@ var bot = new Pandorabot(botOptions);
 */
 
 exports.createBio = function(req, res){
-  console.log(req.body.body);
+  winston.info(req.body.body);
 
   User.findByIdAndUpdate(req.params.id,
   {$set: {"bio": req.body.body}},
   {safe: true},
   function(err, user) {
    if(err) {
-     console.log(err);
+     winston.info(err);
     }
   });
 
   res.send(req.body.body);
 }
 exports.createPipelineStage = function(req,res){
-  console.log("Im here");
+  winston.info("Im here");
 
   User.findByIdAndUpdate(req.params.id,
   {$set: {"pipelineStage": req.body.body}},
   {safe: true},
   function(err, user) {
    if(err) {
-     console.log(err);
+     winston.error(err);
     }
   });
 
@@ -63,129 +64,42 @@ exports.createPhoneNumber = function (req, res) {
   {safe: true},
   function (err, user) {
     if (err) {
-      console.log(err);
+      winston.error(err);
     }
   });
   res.send(req.body.number);
 };
 
 exports.create = function(req, res) {
-  console.log("Im before new User.");
-  console.log(req.body);
+  winston.info("Im before new User.");
+  //winston.info(req.body);
   var user = new User(req.body);
   user.provider = 'local';
   user.fullName = user.firstName + ' ' + user.lastName;
   user.pandoraBotSaid = '';
   user.save(function(err) {
     if (err) {
-      console.log(err);
+      winston.error(err);
       res.send(err);
     }
     else {
-      console.log(user._id);
+      winston.info(user._id);
 
-      console.log("User controller hit");
-      console.log(user._id);
+      winston.info("User controller hit");
+      winston.info(user._id);
 
-      // // Generate all current surveys for this user
-      // SurveyTemplate.find({}, function (err, surveys) {
-      //   _.each(surveys, function (survey) {
-      //     var xml = builder.create('aiml').att('version', '2.0');
-      //     xml.ele('category')
-      //       .ele('pattern', 'XINIT ' + survey._id + user._id)
-      //       .up()
-      //       .ele('template', 'Hi! Here\'s a survey your coach wanted me to send you.\n' + survey.questions[0].question);
-      //     //Find out how the bot normalizes the first question
-      //     var normalizedQuestion;
-      //     bot.talk({extra: true, trace: true, input: 'XNORM ' + survey.questions[0].question}, function (err, res) {
-      //       normalizedQuestion = res.responses.join(' ');
-      //
-      //       User.findByIdAndUpdate(
-      //         user._id,
-      //         {pandoraBotSaid: normalizedQuestion},
-      //         {new: true},
-      //         function (err, user) {
-      //           console.log('User updated');
-      //           console.log(user);
-      //       });
-      //
-      //       //TODO: fix if IE support becomes an issue
-      //       var total = survey.questions.length - 1;
-      //       var count = 0;
-      //       var xmlString = '';
-      //       for (var key = 0; key < survey.questions.length; key++) {
-      //         (function (question) {
-      //           if (key != 0) {
-      //             bot.talk({extra: true, trace: true, input: 'XNORM ' + question}, function (err, res) {
-      //               if (!err) {
-      //                 xml.ele('category')
-      //                   .ele('pattern', user._id + ' *')
-      //                   .up()
-      //                   .ele('that', normalizedQuestion)
-      //                   .up()
-      //                   .ele('template', question)
-      //                     .ele('think')
-      //                       .ele('set')
-      //                         .att('name', survey._id + user._id + count)
-      //                         .ele('star');
-      //                 normalizedQuestion = res.responses.join(' ');
-      //               }
-      //               count++;
-      //               if (count > total - 1) {
-      //                 (function () {
-      //                   xml.ele('category')
-      //                     .ele('pattern', user._id + ' *')
-      //                     .up()
-      //                     .ele('that', normalizedQuestion)
-      //                     .up()
-      //                     // Bot signals end of conversation by sending id of survey and user id
-      //                     .ele('template', 'Thanks for answering my questions! Enjoy the rest of your day. ' + survey._id + user._id)
-      //                       .ele('think')
-      //                         .ele('set')
-      //                           .att('name', survey._id + user._id + count)
-      //                           .ele('star');
-      //                   xmlString = xml.end({pretty: true});
-      //                   console.log();
-      //                   console.log(xmlString);
-      //                   fs.writeFile('botfiles/' + survey._id + user._id + '.aiml', xmlString, function (err) {
-      //                     if (err) {
-      //                       console.log(err);
-      //                     }
-      //                     console.log('The file was saved.');
-      //                     bot.upload('botfiles/' + survey._id + user._id + '.aiml', function (err, res) {
-      //                       if (!err) {
-      //                         console.log(res);
-      //                         bot.compile(function (err, res) {
-      //                           if (!err) {
-      //                             console.log('Bot ready to use.');
-      //                             console.log(res);
-      //                           }
-      //                         });
-      //                       }
-      //                     });
-      //                   });
-      //                 }());
-      //               }
-      //             });
-      //           }
-      //         })(survey.questions[key].question);
-      //       }
-      //     });
-      //   });
-      // });
-      //
         User.findByIdAndUpdate(user.coaches[0],
         {$push: {"clients": user._id}},
         {safe: true},
         function(err, coach) {
           if(err) {
-            console.log(err);
+            winston.error(err);
           }
           else {
-            console.log('adding user ' + user._id + ' ot coac');
+            winston.info('adding user ' + user._id + ' ot coac');
             user.clients.push(user._id);
-            console.log(coach);
-            console.log('success');
+            winston.info(coach);
+            winston.info('success');
             res.send(user);
           }
         });
@@ -193,27 +107,15 @@ exports.create = function(req, res) {
     });
   };
 
-  //Test: need my our id(colins)
-      // User.populate(
-      //   reminder.assignee,
-      //   {path: 'reminders'}, function(err, user) {
-      //     if(err) {
-      //       // Do something
-      //     }
-      //     else {
-      //     }
-      //   }
-      // );
-
 exports.updateCoach = function(req, res){
-  console.log("Im a coach!");
+  winston.info("Im a coach!");
   var user = new User(req.body);
   /*
   User.findByIdAndUpdate(
 
   );
   */
-  console.log('ima a saf');
+  winston.info('ima a saf');
   res.send(user);
 }
 
@@ -256,11 +158,11 @@ exports.reset = function(req,res,next) {
     function(token, done) {
       User.findOne({ username: req.body.username }, function(err, user) {
         if (!user) {
-          console.log('no user found');
+          winston.error('no user found');
           req.flash('status', 'No user with that email was found!');
           return res.redirect('/forgot');
         }
-        console.log(user);
+        winston.info(user);
         user.resetPasswordToken = token;
         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
@@ -293,9 +195,9 @@ exports.reset = function(req,res,next) {
 
       transporter.sendMail(mailOptions, function(err,info) {
         if(err){
-          return console.log(err);
+          return winston.error(err);
         }
-        console.log('Message sent: ' + info.response);
+        winston.info('Message sent: ' + info.response);
 
         req.flash('status', 'An e-mail has been dispatched!');
         done(err, 'done');
@@ -348,7 +250,7 @@ exports.change = function(req, res) {
 
 
 exports.update = function(req,res) {
-  console.log(req.body);
+  //winston.info(req.body);
   if(!req.user) {
     // Use the 'response' object to render the signup page
     res.render('pages/signin', {
@@ -365,22 +267,20 @@ exports.update = function(req,res) {
 
     res.redirect('/');
   }
-}
+};
 
 
 exports.delete = function(req, res){
-  console.log("hey");
-  console.log(req.body);
+  winston.info("hey");
+  //winston.info(req.body);
 
   res.send("403");
-
-
-}
+};
 
 exports.parseCSV = function (req, res) {
-  console.log(req.body.textToParse);
+  winston.info(req.body.textToParse);
   parse(req.body.textToParse, function (err, output) {
-    console.log(JSON.stringify(output));
+    winston.info(JSON.stringify(output));
     res.send(output);
   });
 };

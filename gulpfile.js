@@ -66,7 +66,7 @@ gulp.task('nodemon' ,['sass'], function (cb) {
 gulp.task('browser-sync', ['nodemon'], function() {
 	browserSync.init(null, {
     injectChanges: true,
-		proxy: "http://107.170.21.178:12557",
+		proxy: "http://localhost:12557",
         files: ["app/**/*.*"],
         browser: 'google chrome',
         port: 7000,

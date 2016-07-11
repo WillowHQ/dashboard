@@ -16,6 +16,7 @@ var app;
                 this.$mdMedia = $mdMedia;
                 this.$http = $http;
                 this.searchText = '';
+                this.reminders = [];
                 this.responses = [];
                 this.tabIndex = 0;
                 this.selected = null;
@@ -23,7 +24,7 @@ var app;
                 this.newReminder = new dashboard.Reminder('', null);
 
 
-                //this.socket = io.connect('http://107.170.21.178:3001');
+                //this.socket = io.connect('http://localhost:3001');
 
                 //Survey stuff
                 this.questions1 = [{type: "Yes/No"},{type:"Scale from 1 to 5"},{type:"Written Answer"}];
@@ -297,7 +298,7 @@ var app;
                     //first make a object that can be turned into a object on the back end
 
                     self.$http.post('/api/assignment/create' , surveyUserAssign).then(function (response){
-                      console.log("this sungun worked" + response.data);
+                      console.log("this sungun worked" + JSON.stringify(response.data));
                     });
                   }});
 
@@ -580,16 +581,11 @@ var app;
                     }
                 }).then(function (reminder) {
                     console.log(reminder);
-                    // Post request, and push onto users local list of reminders
-                    // this.$http.post('uri').then((response) => response.data)
-                    // after promise is succesful add to
-                    // reminder.assigne.reminders.push()
-
 
                     // First step, create the reminder and save it on the db
                     _this.$http.post('/api/reminder/create', reminder).then(function successCallback(response) {
-                        // Push the reminder to the user
-                        self.selected.reminders.push(response.data);
+                        // Add the reminder to the reminders array
+                        _this.reminders.push(response.data);
                         console.log(response.data);
                         // Create the assignment object
                         var reminderUserAssign = {
@@ -616,6 +612,28 @@ var app;
               console.log(reminderUserAssign);
               this.$http.post('/api/assignment/create', reminderUserAssign).then(function (response) {
                 console.log('Frontend works' + JSON.stringify(response.data));
+              });
+            };
+
+            MainController.prototype.hasReminders = function (user) {
+              // Go through all of the reminders
+              for (var i = 0; i < this.reminders.length; i++) {
+                // If the user's id matches any of the reminder's assignee
+                if (this.reminders[i].assignee === user._id) {
+                  // The user has a reminder, so return true
+                  return true;
+                }
+              }
+              // If the user's id doesn't match any of the reminder's assignee, return false
+              return false;
+            };
+
+            MainController.prototype.getReminders = function () {
+              var _this = this;
+              console.log('Getting reminders');
+              _this.$http.get('/api/reminder/list').then(function (response) {
+                _this.reminders = response.data;
+                console.log(response.data);
               });
             };
 
@@ -766,12 +784,11 @@ var app;
 
             MainController.prototype.updateReminder = function (reminder) {
                 console.log('Inside updateReminder');
-                console.log(userSelected.reminders);
                 console.log(reminder);
-                for (var i = 0; i < userSelected.reminders.length; i++) {
-                    if (reminder._id == userSelected.reminders[i]._id) {
-                        userSelected.reminders[i] = reminder;
-                        console.log(userSelected.reminders);
+                for (var i = 0; i < this.reminders.length; i++) {
+                    if (reminder._id == this.reminders[i]._id) {
+                        this.reminders[i] = reminder;
+                        console.log(this.reminders);
                         console.log('Look ma, an update!');
                         return true;
                     }
@@ -779,7 +796,7 @@ var app;
                 return false;
             };
             MainController.prototype.deleteReminder = function (reminder) {
-                this.selected.reminders = _.without(this.selected.reminders, reminder);
+                this.reminders = _.without(this.reminders, reminder);
                 /*var foundIndex = this.selected.reminders.indexOf(reminder);
                 this.selected.reminders.splice(foundIndex, 1);*/
             };

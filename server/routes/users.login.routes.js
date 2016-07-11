@@ -71,7 +71,7 @@ module.exports = function(app) {
 											});
 											// Combine each forEach statement O(n^2)
 											_.forEach(slack, function(member) {
-												request.post('http://107.170.21.178:12557/generate',{
+												request.post('http://localhost:12557/generate',{
 													form: {
 															user: req.user.id,
 															client: {

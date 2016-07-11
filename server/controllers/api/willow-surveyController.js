@@ -2,10 +2,10 @@
 
 var mongoose = require('mongoose');
 var WillowSurvey = require('../../models/willow-survey.js');
-
+var winston = require('winston');
 
 exports.create = function(req, res) {
-  console.log(req.body);
+  //winston.info(req.body);
   var survey = new WillowSurvey(req.body);
   survey.save(function(err, survey) {
     if(!err) {

@@ -1,11 +1,12 @@
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
-    User = require('mongoose').model('User');
+    User = require('mongoose').model('User'),
+    winston = require('winston');
 
 module.exports = function() {
   passport.use(new LocalStrategy(function(username, password, done) {
-    console.log('Attempting to authenticate user:');
-    console.log(username);
+    winston.info('Attempting to authenticate user:');
+    winston.info(username);
     User.findOne({
       username: username
     }, function(err, user) {
@@ -19,21 +20,21 @@ module.exports = function() {
         });
       }
 
-      console.log('The user\'s password is:');
-      console.log(user.password);
-      console.log('And the password that was attempted was: ');
-      console.log(password);
-      console.log(user.hashPassword(password));
+      winston.info('The user\'s password is:');
+      winston.info(user.password);
+      winston.info('And the password that was attempted was: ');
+      winston.info(password);
+      winston.info(user.hashPassword(password));
 
       if (!user.authenticate(password)) {
-        console.log();
-        console.log('Something is wrong with the user. The user is:');
-        console.log(JSON.stringify(user));
-        console.log('The user\'s password is:');
-        console.log(user.password);
-        console.log('And the password that was attempted was: ');
-        console.log(user.hashPassword(password));
-        console.log();
+        winston.info();
+        winston.info('Something is wrong with the user. The user is:');
+        winston.info(JSON.stringify(user));
+        winston.info('The user\'s password is:');
+        winston.info(user.password);
+        winston.info('And the password that was attempted was: ');
+        winston.info(user.hashPassword(password));
+        winston.info();
         return done(null, false, {
           message: 'Invalid password'
         });

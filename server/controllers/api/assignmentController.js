@@ -2,16 +2,16 @@
 
 var mongoose = require('mongoose');
 var User = require('../../models/user.js'),
-
-Assignment = require('../../models/assignment.js');
+Assignment = require('../../models/assignment.js'),
+winston = require('winston');
 
 ///create a assignment.js or change as assignment for right now is only a string.
 
 //not used
 exports.create = function(req, res) {
   var assignment = new Assignment(req.body);
-  console.log("assignment controller");
-  console.log(assignment);
+  winston.info("assignment controller");
+  //winston.info(assignment);
   assignment.save(function(err, assignment){
     // if(!err){
     //   User.findByIdAndUpate(
@@ -76,29 +76,16 @@ exports.convosNow = function(req, res) {
 
 
         // console.log("testing" + assignments);
-         console.log(assignments);
-         console.log('exec assignments/now');
+         winston.info(JSON.stringify(assignments));
+         winston.info('exec assignments/now');
          if(!err){
-          //  for(var i = 0; i <assignments.length; i++){
-          //    var questionsId = assignments[i].surveyTemplateId.questions;
-          //    for (var j = 0; j < questionsId.length; j++){
-          //      SurveyQuestion.findById(questionsId._id)
-          //    }
-          //
-          //  SurveyQuestion.findById
-
-
-           //ok now we need to get the questions
-
-           //res.send(assignments);
-
            //ok so first I need to iterate thru the assignments array
 
            //create a variable to store the trimmed data in
            var convos = [];
 
           for (var i = 0; i < assignments.length; i++) {
-            console.log(assignments[i]);
+            winston.info(JSON.stringify(assignments[i]));
             var convo = new Object;
             convo.assignmentId = assignments[i]._id;
 
@@ -110,17 +97,17 @@ exports.convosNow = function(req, res) {
             convo.type  =  assignments[i].type;
 
             if(convo.type == "survey"){
-              console.log("we got a survey over here");
+              winston.info("we got a survey over here");
               convo.questions = assignments[i].surveyTemplateId.questions;
           //      //get survey template id
               convo.surveyId = assignments[i].surveyTemplateId._id;
             } else if (convo.type == "reminder"){
-                 console.log("we got a reminder");
+                 winston.info("we got a reminder");
                  convo.reminderId = assignments[i].reminderId._id;
                  convo.questions = [];
                  convo.questions[0] = assignments[i].reminderId.title;
             } else {
-                console.error("invalid assignment type");
+                winston.error("invalid assignment type");
             }
           convos.push(convo);
             }
@@ -136,7 +123,7 @@ exports.convosNow = function(req, res) {
           //  res.json(convos);
          }
          else
-           console.log(err);
+           winston.error(err);
        });
 
 }

@@ -7,15 +7,18 @@
     <ng-md-icon icon="add"></ng-md-icon>
   </md-button>
 
-  <p  ng-if="!vm.selected.reminders.length">No reminders for  {{vm.selected.firstName +" " + vm.selected.lastName}}, yet.</p>
+  <p  ng-if="!vm.hasReminders(vm.selected)">No reminders for  {{vm.selected.firstName +" " + vm.selected.lastName}}, yet.</p>
 
-  <md-card md-whiteframe = "3" ng-repeat="reminder in vm.selected.reminders | orderBy: '-date':true track by reminder._id" >
+  <md-card md-whiteframe = "3" ng-repeat="reminder in vm.reminders | filter:{'assignee': vm.selected._id}:true | orderBy: '-date':true track by reminder._id" >
 
     <div layout="row" >
 
       <md-card-content  flex="60"  >
         <div layout="row">
 
+          <p>
+            {{reminder._id}}
+          </p>
 
           <md-card-content layout-padding layout = "column" flex = "40" >
             <h3> {{reminder.title}} </h3>

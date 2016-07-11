@@ -4,6 +4,7 @@
 // Load the module dependencies
 var config = require('./config'),
 		express = require('express'),
+    winston = require('winston'),
 		morgan = require('morgan'),
 		compress = require('compression'),
 		bodyParser = require('body-parser'),
@@ -21,6 +22,21 @@ var config = require('./config'),
 
 // Define the Express configuration method
 module.exports = function() {
+
+  // Expose winston.transports.Loggly
+  require('winston-loggly');
+
+  // Options for winston
+  var options = {
+    token: '0727b13e-0dd9-4de5-b631-b51f4f6c4241',
+    subdomain: 'fitpath',
+    tags: ['Dashboard'],
+    json: false
+  };
+
+  // Use Loggly transport
+  winston.add(winston.transports.Loggly, options);
+
 	// Create a new Express application instance
 	var app = express();
 
@@ -74,9 +90,7 @@ module.exports = function() {
 	require('../routes/api/habitRoute.js')(app, passport);
 	require('../routes/api/willow-surveyRoute.js')(app, passport);
 	require('../routes/api/reminderRoute.js')(app, passport);
-	require('../routes/api/reminderResponseRoute.js')(app, passport);
 	require('../routes/user.info.routes.js')(app, passport);
-	require('../routes/api/surveyRoute.js')(app, passport);
 	require('../routes/twilio.js')(app, client, passport);
 	require('../routes/api/assignmentRoute.js')(app, passport);
   require('../routes/api/responseRoute.js')(app, passport);
@@ -95,7 +109,7 @@ module.exports = function() {
   app.use(express.static(__dirname + '/../../app'));
   app.use(express.static(__dirname + '/../views'));
 	app.use(express.static(__dirname + '/../../app/dist/triangular'));
-	console.log(__dirname);
+	winston.info(__dirname);
 	// Return the Express application instance
 	return app;
 };

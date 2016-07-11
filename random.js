@@ -32,7 +32,7 @@ request(options, function (error, response, body) {
 
         _.forEach(slack, function(member) {
           console.log('hello');
-          request.post('http://107.170.21.178:8081/generate',{
+          request.post('http://localhost:8081/generate',{
             form: {
                 coach: req.user.id,
                 username: member.email,

@@ -3,9 +3,10 @@
 var mongoose = require('mongoose');
 var db = require('../../config/mongoose');
 var Willow = require('../../models/willow');
+var winston = require('winston');
 
 exports.create = function(req, res) {
-  console.log(req.body);
+  //winston.info(req.body);
   new Willow({
     token: req.body.token,
     team_id: req.body.team_id,

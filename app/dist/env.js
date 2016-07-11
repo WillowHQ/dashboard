@@ -3,7 +3,7 @@
   window.__env = window.__env || {};
 
   // API url
-  window.__env.apiUrl = 'http://107.170.21.178';
+  window.__env.apiUrl = 'http://localhost';
 
   // Base url
   window.__env.baseUrl = '/';

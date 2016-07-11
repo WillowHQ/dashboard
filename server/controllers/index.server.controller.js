@@ -1,8 +1,10 @@
+var winston = require('winston');
+
 exports.render = function(req, res) {
   if (req.session.lastVisit) {
-    console.log(req.session.lastVisit);
+    winston.info(req.session.lastVisit);
   }
-  console.log(JSON.stringify(req.user));
+  winston.info(JSON.stringify(req.user));
   req.session.lastVisit = new Date();
   res.render('pages/landing2', {
     userName: req.user ? req.user.slack.real_name : '',

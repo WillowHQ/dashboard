@@ -7,52 +7,41 @@ var _ = require('underscore');
 var moment = require('moment');
 var Promise = require('bluebird');
 var request = require('request');
+var winston = require('winston');
 
 
 exports.create = function(req, res) {
   var note = new Note(req.body);
-  console.log("note controller hit");
-  console.log(note);
+  winston.info("note controller hit");
+  winston.info(note);
 
   note.save(function(err, note) {
     if(!err) {
-      console.log("NO Error")
+      winston.info("NO Error")
       User.findByIdAndUpdate(
         note.assignee,
         {$push: {"notes": note}},
         {safe: true},
         function(err, user) {
           if(err) {
-            console.log(err);
+            winston.error(err);
           }
           else {
-            console.log("Note pushed to user.");
-            console.log("User is: " + JSON.stringify(user));
+            winston.info("Note pushed to user.");
+            winston.info("User is: " + JSON.stringify(user));
           }
         }
       );
 
-      // User.populate(
-      //   reminder.assignee,
-      //   {path: 'reminders'}, function(err, user) {
-      //     if(err) {
-      //       // Do something
-      //     }
-      //     else {
-      //     }
-      //   }
-      // );
-      console.log(note);
+      winston.info(note);
       res.send(note);
     }
   });
 }
 
-
-
 exports.update = function(req, res) {
-  console.log('Updating Note');
-  console.log();
+  winston.info('Updating Note');
+  winston.info();
   Note.findOneAndUpdate({'_id': req.body._id},
   {
     body: req.body.body,
@@ -60,33 +49,33 @@ exports.update = function(req, res) {
     assignee:req.body.assignee
   }, {new:true}, function(err, note){
     if(!err){
-      console.log('Note updated: ' + note);
+      winston.info('Note updated: ' + note);
       User.findById(req.body.assignee, function(err, user){
         if(err){
-          console.log(err);
+          winston.info(err);
         }
         var _user = user;
         var user = user.toObject();
-        console.log('The user is: ' + JSON.stringify(user));
-        console.log('The user\'s id is: ' + user._id);
-        console.log('User.reminders is: ' + JSON.stringify(user.notes));
+        winston.info('The user is: ' + JSON.stringify(user));
+        winston.info('The user\'s id is: ' + user._id);
+        winston.info('User.reminders is: ' + JSON.stringify(user.notes));
         for (var i = 0; i < user.notes.length; i++) {
           if (user.notes[i]._id == req.body._id) {
-            console.log(user.notes[i]);
+            winston.info(user.notes[i]);
             user.notes[i] = note;
-            console.log(user.notes[i]);
+            winston.info(user.notes[i]);
             res.send(req.body);
           }
         }
         _user.set(user);
         _user.save(function (err, doc) {
-          console.log(JSON.stringify(doc));
+          winston.info(JSON.stringify(doc));
         });
 
       });
     }
     else {
-      console.log("crap");
+      winston.error("crap");
     }
 
   })
@@ -94,8 +83,8 @@ exports.update = function(req, res) {
 }
 
 exports.delete = function(req, res) {
-  console.log("Here note.delete");
-  console.log("id:" + req.params.id);
+  winston.info("Here note.delete");
+  winston.info("id:" + req.params.id);
   Note.findByIdAndRemove(
     req.params.id,
     function(err, note){
@@ -104,14 +93,14 @@ exports.delete = function(req, res) {
           {$pull : {'notes': note}},
           function(err, model){
             if(err){
-              console.log("Help");
+              winston.info("Help");
             }
           });
           res.sendStatus(200);
       }
       else{
-        console.log();
-        console.log(err);
+        winston.info();
+        winston.error(err);
         res.sendStatus(500);
       }
     }

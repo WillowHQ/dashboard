@@ -3,7 +3,8 @@
 // Load the module dependencies
 var User 		 = require('mongoose').model('User'),
 		passport = require('passport'),
-		ObjectId = require('mongoose').Types.ObjectId;
+		ObjectId = require('mongoose').Types.ObjectId,
+    winston  = require('winston');
 
 
 
@@ -72,7 +73,7 @@ exports.signup = function(req, res, next) {
 	// If user is not connected, create and login a new user, otherwise redirect the user back to the main application page
 	if (!req.user) {
 		// Create a new 'User' model instance
-    console.log(req.body);
+    //winston.info(req.body);
 		var user = new User(req.body);
 		var message = null;
 		// Set the user provider property
@@ -93,9 +94,9 @@ exports.signup = function(req, res, next) {
 
 			// If the user was created successfully use the Passport 'login' method to login
 			req.login(user, function(err) {
-				console.log('logged in');
+				winston.info('logged in');
 				// If a login error occurs move to the next middleware
-				console.log(err);
+				winston.error(err);
 				if (err) return next(err);
 
 				// Redirect the user back to the main application page
@@ -103,14 +104,14 @@ exports.signup = function(req, res, next) {
 			});
 		});
 	} else {
-		console.log("Already logged in");
+		winston.info("Already logged in");
 		return res.redirect('/');
 	}
 };
 
 // Generate and Check if Exists
 exports.generateUser = function(req, res, next) {
-	console.log('generate attempted');
+	winston.info('generate attempted');
 	if (req.body.client) {
 		// Create a new 'User' model instance
 		if(true) {
@@ -128,8 +129,8 @@ exports.generateUser = function(req, res, next) {
 						if (err) {
 							// Use the error handling method to get the error message
 							var message = getErrorMessage(err);
-							console.log(err);
-							console.log(message);
+							winston.info(err);
+						  winston.info(message);
 							// Set the flash messages
 							// req.flash('Error auto generating from slack', message);
 						}
@@ -144,7 +145,7 @@ exports.generateUser = function(req, res, next) {
 								{safe: true},
 								function(err, model) {
 									if(err) {
-										console.log(err);
+										winston.error(err);
 									}
 									else {
 										//console.log(model);
@@ -154,13 +155,13 @@ exports.generateUser = function(req, res, next) {
 						}
 					});
 				} else {
-					console.log('user exists');
+					winston.info('user exists');
 					return;
 				}
 			});
 		}
 	} else {
-		console.log("Access Denied.")
+		winston.info("Access Denied.")
 		res.send('Access Denied')
 	}
 }
@@ -181,9 +182,8 @@ exports.saveOAuthUserProfile = function(req, profile, done) {
 
 				// Set a possible base username
 				var possibleUsername = profile.providerData.name || ((profile.email) ? profile.email.split('@')[0] : '');
-				console.log("made it here");
-				console.log("profile" + JSON.stringify(profile));
-				//console.log("profile.providerData: " + JSON.stringify(profile.providerData));
+				winston.info("made it here");
+				winston.info("profile" + JSON.stringify(profile));
 				var name = profile.providerData.name.split(' ');
 				user = new User({
 					firstName: name[0],
@@ -212,24 +212,9 @@ exports.saveOAuthUserProfile = function(req, profile, done) {
 					//phoneNumber:
 				});
 				user.save(function(err){
-					console.log('New user created: ' + JSON.stringify(user));
+					winston.info('New user created: ' + JSON.stringify(user));
 					return done(err, user);
 				})
-				// Find a unique available username
-				// User.findUniqueUsername(possibleUsername, null, function(availableUsername) {
-				// 	// Set the available user name
-				// 	profile.username = availableUsername;
-				//
-				// 	// Create the user
-				// 	user = new User(profile);
-				//
-				// 	// Try saving the new user document
-				// 	user.save(function(err) {
-				// 		// Continue to the next middleware
-				// 		return done(err, user);
-				// 	});
-				// });
-
 			} else {
 				// Continue to the next middleware
 				return done(err, user);

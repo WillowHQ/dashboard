@@ -16,7 +16,7 @@
           <div ng-include="'/dist/view/dashboard/notes/tab-notes.html'"></div>
         </md-tab>
 
-        <md-tab label= "Daily CheckIn" md-on-select="vm.getResponses()">
+        <md-tab label= "Daily CheckIn" md-on-select="vm.getReminders();vm.getResponses()">
           <div ng-include="'/dist/view/dashboard/reminders/tab-reminders.html'"></div>
         </md-tab>
 
